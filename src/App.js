@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Analytics } from '@vercel/analytics/react';
 import "./App.css";
 import { escudosPorNome } from "./escudos";
 import {
@@ -809,6 +810,7 @@ export default function App(){
           </div>
         </section>
       </footer>
+      <Analytics />
     </div>
   );
 }
