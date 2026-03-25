@@ -252,6 +252,7 @@ export default function App(){
   }, []);
 
   const copiarChavePix = useCallback(async () => {
+    console.log("[Simulador Libertadores] Clique: copiar chave Pix");
     try {
       if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(CHAVE_PIX_TEMPLATE);
@@ -788,6 +789,9 @@ export default function App(){
               href={`mailto:${EMAIL_CONTATO}`}
               target="_blank"
               rel="noreferrer"
+              onClick={() =>
+                console.log("[Simulador Libertadores] Clique: enviar feedback por e-mail")
+              }
             >
               Enviar feedback por e-mail
             </a>
