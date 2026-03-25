@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import "./App.css";
 import { escudosPorNome } from "./escudos";
 import {
@@ -811,6 +812,7 @@ export default function App(){
         </section>
       </footer>
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 }
