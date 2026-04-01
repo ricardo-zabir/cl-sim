@@ -87,6 +87,62 @@ export function sortearOitavas(classificados) {
   return null;
 }
 
+/** Sorteia pares ida/volta entre `times` (quantidade par). Mando da volta aleatório entre os dois. */
+export function sortearConfrontosIdaVolta(times, idPrefix) {
+  if (!times || times.length < 2 || times.length % 2 !== 0) return [];
+  const s = embaralhar(times.map(stripPos));
+  const ties = [];
+  for (let i = 0; i < s.length / 2; i++) {
+    const A = {
+      ...s[i * 2],
+      grpPts: 0,
+      grpSG: 0,
+      grpGP: 0,
+      grpGC: 0,
+    };
+    const B = {
+      ...s[i * 2 + 1],
+      grpPts: 0,
+      grpSG: 0,
+      grpGP: 0,
+      grpGC: 0,
+    };
+    const aHostsVolta = Math.random() < 0.5;
+    ties.push({
+      id: `${idPrefix}-${i}`,
+      tipo: "duas",
+      sideA: A,
+      sideB: B,
+      ida: aHostsVolta
+        ? { mandante: B, visitante: A }
+        : { mandante: A, visitante: B },
+      volta: aHostsVolta
+        ? { mandante: A, visitante: B }
+        : { mandante: B, visitante: A },
+    });
+  }
+  return ties;
+}
+
+/** Um confronto de ida e volta entre dois classificados (mando da volta aleatório). */
+export function confrontoDuploEntre(wa, wb, id) {
+  const A = { ...stripPos(wa), grpPts: 0, grpSG: 0, grpGP: 0, grpGC: 0 };
+  const B = { ...stripPos(wb), grpPts: 0, grpSG: 0, grpGP: 0, grpGC: 0 };
+  const aHostsVolta = Math.random() < 0.5;
+  return {
+    id,
+    tipo: "duas",
+    sideA: A,
+    sideB: B,
+    ida: aHostsVolta
+      ? { mandante: B, visitante: A }
+      : { mandante: A, visitante: B },
+    volta: aHostsVolta
+      ? { mandante: A, visitante: B }
+      : { mandante: B, visitante: A },
+  };
+}
+
 export function placarKo(placares, id) {
   return placares[id] || {};
 }

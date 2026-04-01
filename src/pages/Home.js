@@ -1,0 +1,57 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import logoLibertadores from "../assets/copa-libertadores-logo.png";
+import logoCopaBrasil from "../assets/CopaDoBrasil.png";
+import "../App.css";
+
+export default function Home() {
+  return (
+    <div className="app-root home-page">
+      <header className="home-header">
+        <h1 className="app-title">Simuladores</h1>
+        <p className="app-subtitle">
+          Escolha uma competição para abrir o simulador.
+        </p>
+      </header>
+
+      <ul className="home-competitions">
+        <li>
+          <Link className="home-competition-card" to="/copa-libertadores">
+            <img
+              src={logoLibertadores}
+              alt=""
+              className="home-competition-card__logo"
+            />
+            <div className="home-competition-card__body">
+              <h2 className="home-competition-card__title">Copa Libertadores</h2>
+              <p className="home-competition-card__meta">
+                Fase de grupos, mata-mata e regras 2026
+              </p>
+            </div>
+            <span className="home-competition-card__chev" aria-hidden>
+              ›
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link className="home-competition-card" to="/copa-do-brasil">
+            <img
+              src={logoCopaBrasil}
+              alt=""
+              className="home-competition-card__logo"
+            />
+            <div className="home-competition-card__body">
+              <h2 className="home-competition-card__title">Copa do Brasil</h2>
+              <p className="home-competition-card__meta">
+                Quinta fase fixa, sorteio nas oitavas e quartas, final única
+              </p>
+            </div>
+            <span className="home-competition-card__chev" aria-hidden>
+              ›
+            </span>
+          </Link>
+        </li>
+      </ul>
+    </div>
+  );
+}
