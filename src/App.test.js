@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders app without crashing', () => {
+test('renders home with competitions list', () => {
   render(<App />);
-  const element = screen.getByText(/Simulador Copa Libertadores/i);
-  expect(element).toBeInTheDocument();
+  expect(screen.getByText(/Simuladores/i)).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /Copa Libertadores/i })).toHaveAttribute(
+    'href',
+    '/copa-libertadores'
+  );
+  expect(screen.getByRole('link', { name: /Copa do Brasil/i })).toHaveAttribute(
+    'href',
+    '/copa-do-brasil'
+  );
 });

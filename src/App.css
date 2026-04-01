@@ -1,23 +1,114 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,500&display=swap");
 
-/* Copa Libertadores inspired — deep night pitch + gold accents */
+/* Hub (home) — claro, logos das competições em destaque */
 :root {
+  --font: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 6px 24px rgba(15, 61, 40, 0.07);
+  --bg-deep: #f5faf7;
+  --bg-card: #ffffff;
+  --bg-card-hover: #eef6f1;
+  --gold: #0f7a3d;
+  --gold-dim: #0b5c2e;
+  --gold-hover-bright: #1fa85b;
+  --border: rgba(15, 122, 61, 0.12);
+  --text: #1a2e22;
+  --text-muted: #5a6b62;
+  --accent-green: #0d6b36;
+  --qualify: rgba(34, 197, 94, 0.14);
+  --qualify-border: rgba(22, 163, 74, 0.35);
+  --input-bg: #ffffff;
+  --sortear-fg: #0f291c;
+  --bg-glow-a: color-mix(in srgb, #0f7a3d 8%, transparent);
+  --bg-glow-b: color-mix(in srgb, #f2c94c 14%, transparent);
+  --gradient-base-start: #fafdfb;
+  --gradient-base-end: #e8f2ec;
+  --support-donation-end: color-mix(in srgb, #e8f2ec 85%, #0f7a3d 10%);
+  --pill-bg: rgba(15, 122, 61, 0.07);
+  --support-footer-bg: rgba(255, 255, 255, 0.95);
+  --support-footer-text: #4a5c54;
+  --support-footer-btn-text: #1a2e22;
+  --support-footer-btn-bg: rgba(15, 122, 61, 0.07);
+  --support-footer-btn-border: rgba(15, 122, 61, 0.14);
+  --support-block-border: rgba(15, 122, 61, 0.1);
+  --support-block-feedback-bg: #f0f7f3;
+  --champion-bg-end: rgba(15, 122, 61, 0.08);
+  --support-footer-btn-hover-bg: rgba(31, 168, 91, 0.12);
+  --support-footer-btn-hover-border: rgba(15, 122, 61, 0.22);
+  --input-border: rgba(15, 46, 30, 0.14);
+  --card-hover-shadow: 0 14px 36px rgba(15, 90, 55, 0.11);
+}
+
+.theme-libertadores {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
   --bg-deep: #0a1628;
   --bg-card: #111f36;
   --bg-card-hover: #152a45;
-  --border: rgba(212, 175, 55, 0.22);
   --gold: #d4af37;
   --gold-dim: #9a7b2c;
+  --gold-hover-bright: #e8c84a;
+  --border: color-mix(in srgb, var(--gold) 22%, transparent);
   --text: #e8edf4;
   --text-muted: #8b9bb4;
   --accent-green: #1a4d3a;
-  --qualify: rgba(34, 197, 94, 0.12);
-  --qualify-border: rgba(34, 197, 94, 0.35);
   --input-bg: #0d1a2e;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-  --font: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --sortear-fg: #0a1628;
+  --bg-glow-a: color-mix(in srgb, var(--gold) 8%, transparent);
+  --bg-glow-b: color-mix(in srgb, #1a4d3a 15%, transparent);
+  --gradient-base-start: #0a1628;
+  --gradient-base-end: #071018;
+  --support-donation-end: rgba(11, 20, 36, 0.55);
+  --pill-bg: rgba(0, 0, 0, 0.2);
+  --support-footer-bg: rgba(0, 0, 0, 0.22);
+  --support-footer-text: #c4d0e2;
+  --support-footer-btn-text: #f2f6fb;
+  --support-footer-btn-bg: rgba(255, 255, 255, 0.08);
+  --support-footer-btn-border: rgba(255, 255, 255, 0.12);
+  --support-block-border: rgba(255, 255, 255, 0.06);
+  --support-block-feedback-bg: rgba(255, 255, 255, 0.03);
+  --champion-bg-end: rgba(0, 0, 0, 0.2);
+  --support-footer-btn-hover-bg: rgba(255, 255, 255, 0.14);
+  --support-footer-btn-hover-border: rgba(255, 255, 255, 0.25);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* Copa do Brasil — #0F7A3D · texto branco · hover #1FA85B · brilho #F2C94C */
+.theme-copa-brasil {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+  --copa-glow: #f2c94c;
+  --copa-hover: #1fa85b;
+  --bg-deep: #0f7a3d;
+  --bg-card: color-mix(in srgb, #000000 18%, #0f7a3d);
+  --bg-card-hover: color-mix(in srgb, #1fa85b 22%, #0a5c2e);
+  --gold: #f2c94c;
+  --gold-dim: #d4b038;
+  --gold-hover-bright: #f2c94c;
+  --border: color-mix(in srgb, #f2c94c 38%, transparent);
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.78);
+  --accent-green: #0a5c2e;
+  --input-bg: color-mix(in srgb, #000000 22%, #0f7a3d);
+  --sortear-fg: #0f3d24;
+  --bg-glow-a: color-mix(in srgb, #f2c94c 14%, transparent);
+  --bg-glow-b: color-mix(in srgb, #1fa85b 12%, transparent);
+  --gradient-base-start: #0f7a3d;
+  --gradient-base-end: #0a5c2e;
+  --support-donation-end: color-mix(in srgb, #000000 28%, #0f7a3d);
+  --pill-bg: color-mix(in srgb, #1fa85b 28%, transparent);
+  --support-footer-bg: color-mix(in srgb, #000000 22%, #0f7a3d);
+  --support-footer-text: rgba(255, 255, 255, 0.88);
+  --support-footer-btn-text: #ffffff;
+  --support-footer-btn-bg: color-mix(in srgb, #ffffff 10%, transparent);
+  --support-footer-btn-border: color-mix(in srgb, #f2c94c 35%, transparent);
+  --support-block-border: color-mix(in srgb, #f2c94c 22%, transparent);
+  --support-block-feedback-bg: color-mix(in srgb, #000000 15%, transparent);
+  --champion-bg-end: color-mix(in srgb, #1fa85b 18%, #0a5c2e);
+  --support-footer-btn-hover-bg: color-mix(in srgb, #1fa85b 45%, transparent);
+  --support-footer-btn-hover-border: color-mix(in srgb, #f2c94c 55%, transparent);
+  --input-border: color-mix(in srgb, #f2c94c 28%, transparent);
+  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
 }
 
 .app-root {
@@ -25,14 +116,17 @@
   font-family: var(--font);
   color: var(--text);
   background:
-    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(212, 175, 55, 0.08), transparent 50%),
-    radial-gradient(ellipse 80% 50% at 100% 50%, rgba(26, 77, 58, 0.15), transparent 45%),
-    linear-gradient(180deg, #0a1628 0%, #071018 100%);
+    radial-gradient(ellipse 120% 80% at 50% -20%, var(--bg-glow-a), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 100% 50%, var(--bg-glow-b), transparent 45%),
+    linear-gradient(180deg, var(--gradient-base-start) 0%, var(--gradient-base-end) 100%);
   padding: clamp(1rem, 4vw, 2.5rem);
   padding-bottom: 3rem;
 }
 
 .app-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   margin-bottom: 2.5rem;
   max-width: 42rem;
@@ -77,8 +171,8 @@
 
 .phase-tabs__btn--active {
   color: var(--gold);
-  background: rgba(212, 175, 55, 0.12);
-  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent);
 }
 
 .app-badge {
@@ -92,7 +186,7 @@
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   margin-bottom: 0.75rem;
-  background: rgba(212, 175, 55, 0.06);
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
 }
 
 .app-title {
@@ -106,11 +200,147 @@
   background-clip: text;
 }
 
+.home-page .app-title {
+  background: linear-gradient(135deg, #0a3d1f 0%, #0f7a3d 42%, #1fa85b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .app-subtitle {
   margin: 0;
   font-size: 0.95rem;
   color: var(--text-muted);
   line-height: 1.5;
+}
+
+.app-back-home {
+  display: inline-block;
+  margin: 0 auto 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--pill-bg);
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.app-back-home:hover {
+  color: var(--gold);
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+
+.home-page {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.home-competitions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.home-competition-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  text-decoration: none;
+  color: inherit;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.home-competition-card:hover {
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+}
+
+.home-page .home-competition-card {
+  padding: 1.15rem 1.2rem;
+  gap: 1.15rem;
+  border-color: rgba(15, 122, 61, 0.1);
+}
+
+.home-page .home-competition-card:hover {
+  border-color: color-mix(in srgb, #f2c94c 50%, #0f7a3d 35%);
+  background: linear-gradient(180deg, #ffffff 0%, #f9fdfb 100%);
+  box-shadow:
+    var(--card-hover-shadow),
+    0 0 0 1px color-mix(in srgb, #f2c94c 22%, transparent);
+}
+
+.home-competition-card__logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.home-page .home-competition-card__logo {
+  width: 84px;
+  height: 84px;
+  padding: 0.5rem;
+  object-fit: contain;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #ffffff 0%, #f2f7f4 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 16px rgba(15, 90, 55, 0.08),
+    0 0 0 1px rgba(15, 122, 61, 0.06);
+}
+
+.home-competition-card__body {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.home-competition-card__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.home-competition-card__meta {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.home-competition-card__chev {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--gold);
+  opacity: 0.85;
+}
+
+.home-page .home-competition-card__chev {
+  color: #c9a227;
+  opacity: 1;
 }
 
 .groups-grid {
@@ -139,7 +369,7 @@
 }
 
 .group-card:hover {
-  border-color: rgba(212, 175, 55, 0.35);
+  border-color: color-mix(in srgb, var(--gold) 35%, transparent);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
@@ -149,7 +379,7 @@
   justify-content: space-between;
   gap: 0.65rem;
   padding: 0.75rem 0.65rem 0.75rem 0.5rem;
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.12) 0%, transparent 100%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--gold) 12%, transparent) 0%, transparent 100%);
   border-bottom: 1px solid var(--border);
 }
 
@@ -207,9 +437,9 @@
 }
 
 .group-card__arrow:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.12);
-  border-color: rgba(212, 175, 55, 0.4);
-  color: #e8c84a;
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+  color: var(--gold-hover-bright);
 }
 
 .group-card__arrow:disabled {
@@ -234,8 +464,8 @@
 }
 
 .group-card__simulate:hover:not(:disabled) {
-  border-color: rgba(212, 175, 55, 0.45);
-  background: rgba(212, 175, 55, 0.08);
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
   transform: translateY(-1px);
 }
 
@@ -275,7 +505,7 @@
 }
 
 .match-row:focus-within {
-  border-color: rgba(212, 175, 55, 0.25);
+  border-color: color-mix(in srgb, var(--gold) 25%, transparent);
   background: rgba(0, 0, 0, 0.28);
 }
 
@@ -348,7 +578,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--text);
   background: var(--input-bg);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--input-border);
   border-radius: 6px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -356,7 +586,7 @@
 
 .score-input:focus {
   border-color: var(--gold-dim);
-  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 20%, transparent);
 }
 
 .score-input::-webkit-outer-spin-button,
@@ -495,19 +725,19 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0a1628;
-  background: linear-gradient(135deg, var(--gold) 0%, #c9a227 100%);
+  color: var(--sortear-fg);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--gold) 25%, transparent);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .knockout__sortear:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 28px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 6px 28px color-mix(in srgb, var(--gold) 35%, transparent);
 }
 
 .knockout__actions {
@@ -535,8 +765,8 @@
 }
 
 .knockout__resortear:hover {
-  border-color: rgba(212, 175, 55, 0.4);
-  background: rgba(212, 175, 55, 0.08);
+  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
 }
 
 .knockout__hint {
@@ -559,8 +789,8 @@
 }
 
 .bracket__round--final {
-  border-color: rgba(212, 175, 55, 0.45);
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, var(--bg-card) 40%);
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, transparent) 0%, var(--bg-card) 40%);
 }
 
 .bracket__title {
@@ -673,8 +903,8 @@
   margin-top: 0.45rem;
   padding: 0.4rem 0.35rem;
   border-radius: 6px;
-  background: rgba(212, 175, 55, 0.06);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 20%, transparent);
 }
 
 .ko-tie__pen-label {
@@ -729,7 +959,7 @@
 }
 
 .ko-match:focus-within:not(.ko-match--disabled) {
-  border-color: rgba(212, 175, 55, 0.25);
+  border-color: color-mix(in srgb, var(--gold) 25%, transparent);
 }
 
 .ko-match--disabled {
@@ -782,8 +1012,12 @@
   text-align: center;
   padding: 1.25rem 1rem;
   border-radius: var(--radius);
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(0, 0, 0, 0.2) 100%);
+  border: 1px solid color-mix(in srgb, var(--gold) 50%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--gold) 15%, transparent) 0%,
+    var(--champion-bg-end) 100%
+  );
 }
 
 .knockout__champion-label {
@@ -817,30 +1051,30 @@
   padding: 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--support-footer-bg);
   box-shadow: var(--shadow);
   display: grid;
   gap: 0.9rem;
 }
 
 .support-block {
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--support-block-border);
   border-radius: 10px;
   padding: 0.9rem 0.85rem;
 }
 
 .support-block--feedback {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--support-block-feedback-bg);
 }
 
 .support-block--donation {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(11, 20, 36, 0.55) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 8%, transparent) 0%, var(--support-donation-end) 100%);
 }
 
 .support-footer__text {
   margin: 0;
   font-size: 0.84rem;
-  color: #c4d0e2;
+  color: var(--support-footer-text);
   line-height: 1.5;
   text-align: center;
 }
@@ -859,10 +1093,10 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #f2f6fb;
+  color: var(--support-footer-btn-text);
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--support-footer-btn-bg);
+  border: 1px solid var(--support-footer-btn-border);
   border-radius: 999px;
   padding: 0.62rem 1rem;
   cursor: pointer;
@@ -870,20 +1104,20 @@
 }
 
 .support-footer__btn:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--support-footer-btn-hover-border);
+  background: var(--support-footer-btn-hover-bg);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .support-footer__btn--email {
-  border-color: rgba(212, 175, 55, 0.4);
-  background: rgba(212, 175, 55, 0.14);
+  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
 }
 
 .support-footer__btn--email:hover {
-  border-color: rgba(212, 175, 55, 0.6);
-  background: rgba(212, 175, 55, 0.22);
+  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+  background: color-mix(in srgb, var(--gold) 22%, transparent);
 }
 
 .support-footer__btn--pix {
@@ -909,6 +1143,72 @@
 .support-footer__btn--pix.is-copied {
   border-color: rgba(34, 197, 94, 0.72);
   background: rgba(34, 197, 94, 0.32);
+}
+
+.theme-libertadores .support-footer__btn:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+.theme-copa-brasil .support-footer__btn:hover {
+  box-shadow:
+    0 6px 20px color-mix(in srgb, var(--copa-hover) 35%, transparent),
+    0 0 18px color-mix(in srgb, var(--copa-glow) 18%, transparent);
+}
+
+.theme-copa-brasil .app-title {
+  background: linear-gradient(135deg, #ffffff 0%, #fff9e6 55%, #f2c94c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-copa-brasil .app-back-home:hover {
+  color: #ffffff;
+  border-color: color-mix(in srgb, var(--copa-glow) 70%, transparent);
+  background: color-mix(in srgb, var(--copa-hover) 48%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--copa-glow) 28%, transparent);
+}
+
+.theme-copa-brasil .knockout__resortear:hover {
+  color: #ffffff;
+  border-color: color-mix(in srgb, var(--copa-glow) 55%, transparent);
+  background: color-mix(in srgb, var(--copa-hover) 38%, transparent);
+}
+
+.theme-copa-brasil .knockout__sortear {
+  background: linear-gradient(135deg, #f2c94c 0%, #d4b038 100%);
+  color: var(--sortear-fg);
+  border: 1px solid color-mix(in srgb, #f2c94c 70%, transparent);
+  box-shadow:
+    0 4px 22px color-mix(in srgb, #f2c94c 32%, transparent),
+    0 0 0 1px color-mix(in srgb, #ffffff 12%, transparent);
+}
+
+.theme-copa-brasil .knockout__sortear:hover {
+  background: linear-gradient(135deg, #1fa85b 0%, #0f7a3d 100%);
+  color: #ffffff;
+  border-color: color-mix(in srgb, #f2c94c 55%, transparent);
+  box-shadow:
+    0 6px 28px color-mix(in srgb, #1fa85b 45%, transparent),
+    0 0 26px color-mix(in srgb, #f2c94c 22%, transparent);
+}
+
+.theme-copa-brasil .bracket__round {
+  box-shadow:
+    var(--shadow),
+    0 0 0 1px color-mix(in srgb, var(--copa-glow) 20%, transparent);
+}
+
+.theme-copa-brasil .bracket__round--final {
+  box-shadow:
+    var(--shadow),
+    0 0 0 1px color-mix(in srgb, var(--copa-glow) 45%, transparent),
+    0 0 36px color-mix(in srgb, var(--copa-glow) 14%, transparent);
+}
+
+.theme-copa-brasil .ko-tie:not(.ko-tie--placeholder):hover,
+.theme-copa-brasil .ko-match:not(.ko-match--disabled):hover {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copa-glow) 30%, transparent);
 }
 
 @media (min-width: 768px) {
