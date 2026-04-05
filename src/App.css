@@ -111,6 +111,44 @@
   --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
 }
 
+/* Champions League — fundo #050B1A · cards #0A1F44 · borda #1B3C8C · botões #1B3C8C / hover #2F5BFF */
+.theme-champions-league {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --ucl-btn: #1b3c8c;
+  --ucl-btn-hover: #2f5bff;
+  --ucl-card-border: #1b3c8c;
+  --bg-deep: #050b1a;
+  --bg-card: #0a1f44;
+  --bg-card-hover: #0f2a5c;
+  --gold: #6b9fff;
+  --gold-dim: #4a7ae8;
+  --gold-hover-bright: #2f5bff;
+  --border: rgba(27, 60, 140, 0.55);
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --accent-green: #1b3c8c;
+  --input-bg: #050b1a;
+  --sortear-fg: #ffffff;
+  --bg-glow-a: color-mix(in srgb, #1b3c8c 22%, transparent);
+  --bg-glow-b: color-mix(in srgb, #2f5bff 12%, transparent);
+  --gradient-base-start: #050b1a;
+  --gradient-base-end: #071228;
+  --support-donation-end: color-mix(in srgb, #0a1f44 65%, #000000);
+  --pill-bg: rgba(27, 60, 140, 0.25);
+  --support-footer-bg: rgba(10, 31, 68, 0.92);
+  --support-footer-text: rgba(255, 255, 255, 0.82);
+  --support-footer-btn-text: #ffffff;
+  --support-footer-btn-bg: #1b3c8c;
+  --support-footer-btn-border: rgba(47, 91, 255, 0.45);
+  --support-block-border: rgba(27, 60, 140, 0.65);
+  --support-block-feedback-bg: rgba(5, 11, 26, 0.55);
+  --champion-bg-end: rgba(27, 60, 140, 0.35);
+  --support-footer-btn-hover-bg: #2f5bff;
+  --support-footer-btn-hover-border: rgba(255, 255, 255, 0.35);
+  --input-border: rgba(27, 60, 140, 0.85);
+  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
 .app-root {
   min-height: 100vh;
   font-family: var(--font);
@@ -1209,6 +1247,58 @@
 .theme-copa-brasil .ko-tie:not(.ko-tie--placeholder):hover,
 .theme-copa-brasil .ko-match:not(.ko-match--disabled):hover {
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--copa-glow) 30%, transparent);
+}
+
+.theme-champions-league .app-title {
+  background: linear-gradient(135deg, #ffffff 0%, #a8c4ff 55%, #6b9fff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-champions-league .app-back-home:hover {
+  color: #ffffff;
+  border-color: rgba(47, 91, 255, 0.65);
+  background: rgba(27, 60, 140, 0.55);
+  box-shadow: 0 0 20px rgba(47, 91, 255, 0.25);
+}
+
+.theme-champions-league .knockout__sortear {
+  background: var(--ucl-btn);
+  color: #ffffff;
+  border: 1px solid rgba(47, 91, 255, 0.5);
+  box-shadow: 0 4px 20px rgba(27, 60, 140, 0.45);
+}
+
+.theme-champions-league .knockout__sortear:hover {
+  background: var(--ucl-btn-hover);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 6px 28px rgba(47, 91, 255, 0.4);
+}
+
+.theme-champions-league .bracket__round {
+  border: 1px solid var(--ucl-card-border);
+  box-shadow: var(--shadow), 0 0 0 1px rgba(27, 60, 140, 0.35);
+}
+
+.theme-champions-league .bracket__round--final {
+  border-color: rgba(47, 91, 255, 0.65);
+  box-shadow:
+    var(--shadow),
+    0 0 0 1px rgba(47, 91, 255, 0.4),
+    0 0 32px rgba(47, 91, 255, 0.12);
+}
+
+.theme-champions-league .ko-tie:not(.ko-tie--placeholder):hover,
+.theme-champions-league .ko-match:not(.ko-match--disabled):hover {
+  box-shadow: 0 0 0 1px rgba(47, 91, 255, 0.35);
+}
+
+.theme-champions-league .support-footer__btn:hover {
+  background: var(--ucl-btn-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 18px rgba(47, 91, 255, 0.35);
 }
 
 @media (min-width: 768px) {

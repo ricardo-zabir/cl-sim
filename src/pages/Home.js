@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import logoLibertadores from "../assets/copa-libertadores-logo.png";
 import logoCopaBrasil from "../assets/CopaDoBrasil.png";
+import logoChampionsLeague from "../assets/Logo_UEFA_Champions_League.png";
 import "../App.css";
 
 export default function Home() {
@@ -44,6 +45,24 @@ export default function Home() {
               <h2 className="home-competition-card__title">Copa do Brasil</h2>
               <p className="home-competition-card__meta">
                 Quinta fase fixa, sorteio nas oitavas e quartas, final única
+              </p>
+            </div>
+            <span className="home-competition-card__chev" aria-hidden>
+              ›
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link className="home-competition-card" to="/champions-league">
+            <img
+              src={logoChampionsLeague}
+              alt=""
+              className="home-competition-card__logo"
+            />
+            <div className="home-competition-card__body">
+              <h2 className="home-competition-card__title">Champions League</h2>
+              <p className="home-competition-card__meta">
+                Quartas fixas, semifinais em chave e final única
               </p>
             </div>
             <span className="home-competition-card__chev" aria-hidden>

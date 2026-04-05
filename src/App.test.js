@@ -12,4 +12,8 @@ test('renders home with competitions list', () => {
     'href',
     '/copa-do-brasil'
   );
+  expect(screen.getByRole('link', { name: /Champions League/i })).toHaveAttribute(
+    'href',
+    '/champions-league'
+  );
 });

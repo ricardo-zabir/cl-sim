@@ -143,6 +143,20 @@ export function confrontoDuploEntre(wa, wb, id) {
   };
 }
 
+/** Ida na casa do time da esquerda (`sideA`); volta na casa do `sideB`. */
+export function confrontoDuploMandoEsquerda(wa, wb, id) {
+  const A = { ...stripPos(wa), grpPts: 0, grpSG: 0, grpGP: 0, grpGC: 0 };
+  const B = { ...stripPos(wb), grpPts: 0, grpSG: 0, grpGP: 0, grpGC: 0 };
+  return {
+    id,
+    tipo: "duas",
+    sideA: A,
+    sideB: B,
+    ida: { mandante: A, visitante: B },
+    volta: { mandante: B, visitante: A },
+  };
+}
+
 export function placarKo(placares, id) {
   return placares[id] || {};
 }
