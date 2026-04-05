@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import Home from "./pages/Home";
 import CopaLibertadoresSimulator from "./pages/CopaLibertadoresSimulator";
 import CopaDoBrasilSimulator from "./pages/CopaDoBrasilSimulator";
+import ChampionsLeagueSimulator from "./pages/ChampionsLeagueSimulator";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/copa-libertadores" element={<CopaLibertadoresSimulator />} />
         <Route path="/copa-do-brasil" element={<CopaDoBrasilSimulator />} />
+        <Route path="/champions-league" element={<ChampionsLeagueSimulator />} />
       </Routes>
       <Analytics />
       <SpeedInsights />
