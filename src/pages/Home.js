@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logoLibertadores from "../assets/copa-libertadores-logo.png";
 import logoCopaBrasil from "../assets/CopaDoBrasil.png";
 import logoChampionsLeague from "../assets/Logo_UEFA_Champions_League.png";
+import logoWorldCup2026 from "../assets/world-cup-2026-footballlogos-org.png";
 import "../App.css";
 
 export default function Home() {
@@ -63,6 +64,24 @@ export default function Home() {
               <h2 className="home-competition-card__title">Champions League</h2>
               <p className="home-competition-card__meta">
                 Quartas fixas, semifinais em chave e final única
+              </p>
+            </div>
+            <span className="home-competition-card__chev" aria-hidden>
+              ›
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link className="home-competition-card" to="/copa-do-mundo-2026">
+            <img
+              src={logoWorldCup2026}
+              alt=""
+              className="home-competition-card__logo"
+            />
+            <div className="home-competition-card__body">
+              <h2 className="home-competition-card__title">Copa do Mundo 2026</h2>
+              <p className="home-competition-card__meta">
+                12 grupos, turno único e tabela ao vivo
               </p>
             </div>
             <span className="home-competition-card__chev" aria-hidden>

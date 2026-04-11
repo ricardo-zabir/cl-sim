@@ -16,6 +16,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "prestart": "node -e \"require('fs').copyFileSync('src/assets/simfut.png','public/simfut.png')\"",
+    "prebuild": "node -e \"require('fs').copyFileSync('src/assets/simfut.png','public/simfut.png')\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

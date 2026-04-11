@@ -1,17 +1,26 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
-import { escudosPorNome } from "../escudos";
+import { escudoWC2026PorNome } from "../escudosWorldCup2026";
 import {
-  sortearOitavas,
-  montarChaveamento,
-  vencedorFinal,
-  agregadoConfronto,
-  placarKo,
-} from "../knockoutLogic";
+  gruposWC2026,
+  gerarJogosRoundRobin4,
+  JOGOS_POR_RODADA_GRUPO_WC,
+  TOTAL_RODADAS_GRUPO_WC,
+} from "../wc2026Grupos";
+import {
+  calcularOitoMelhoresTerceiros,
+  terceiroNosOitoMelhores,
+} from "../wc2026MelhoresTerceiros";
+import { montarSegundaFase16 } from "../wc2026SegundaFase";
+import {
+  montarChaveamentoWc,
+  vencedorJogoUnico,
+} from "../wc2026KnockoutLogic";
+import { placarKo } from "../knockoutLogic";
 
 function Escudo({ nome }) {
-  const src = escudosPorNome[nome];
+  const src = escudoWC2026PorNome(nome);
   if (!src) return null;
   return (
     <img
@@ -24,42 +33,16 @@ function Escudo({ nome }) {
   );
 }
 
-const grupos = {
-  A: ["Flamengo","Estudiantes","Cusco","Independiente Medellín"],
-  B: ["Nacional","Universitario","Coquimbo Unido","Deportes Tolima"],
-  C: ["Fluminense","Bolívar","Deportivo La Guaira","Independiente Rivadavia"],
-  D: ["Boca Juniors","Cruzeiro","Universidad Católica","Barcelona"],
-  E: ["Peñarol","Corinthians","Santa Fé","Platense"],
-  F: ["Palmeiras","Cerro Porteño","Junior","Sporting Cristal"],
-  G: ["LDU","Lanús","Always Ready","Mirassol"],
-  H: ["Independiente del Valle","Libertad","Rosario Central","Universidad Central"]
-};
+const grupos = gruposWC2026;
 
-const JOGOS_POR_RODADA_GRUPO = 2;
-const TOTAL_RODADAS_GRUPO = 6;
+const JOGOS_POR_RODADA_GRUPO = JOGOS_POR_RODADA_GRUPO_WC;
+const TOTAL_RODADAS_GRUPO = TOTAL_RODADAS_GRUPO_WC;
+
+const gerarJogos = gerarJogosRoundRobin4;
+
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
 const CHAVE_PIX_TEMPLATE = "75df5998-b352-4f8b-a0c1-38bedec43b2c";
 
-const gerarJogos = (times) => {
-  const [A1,A2,A3,A4] = times;
-  return [
-    {casa:A4, fora:A2},
-    {casa:A3, fora:A1},
-    {casa:A2, fora:A3},
-    {casa:A1, fora:A4},
-    {casa:A2, fora:A1},
-    {casa:A4, fora:A3},
-    {casa:A3, fora:A2},
-    {casa:A4, fora:A1},
-    {casa:A1, fora:A2},
-    {casa:A3, fora:A4},
-    {casa:A1, fora:A3},
-    {casa:A2, fora:A4},
-  ];
-};
-
-// Distribuição simples para simular um gol:
-// 40% -> 0, 30% -> 1, 20% -> 2, 5% -> 3, 3% -> 4, 1% -> 5, 1% -> 6
 function sortearGolsSimulacao() {
   const r = Math.random() * 100;
   if (r < 40) return 0;
@@ -74,17 +57,17 @@ function sortearGolsSimulacao() {
 function calcularTabela(jogos, grupo, placares) {
   const tabela = {};
 
-  jogos.forEach((j,i)=>{
-    const {casa,fora} = j;
+  jogos.forEach((j, i) => {
+    const { casa, fora } = j;
     const key = `${grupo}-${i}`;
     const placar = placares[key] || {};
     const gCasa = placar.casa ?? null;
     const gFora = placar.fora ?? null;
 
-    if(!tabela[casa]) tabela[casa] = {P:0,J:0,V:0,E:0,D:0,GP:0,GC:0};
-    if(!tabela[fora]) tabela[fora] = {P:0,J:0,V:0,E:0,D:0,GP:0,GC:0};
+    if (!tabela[casa]) tabela[casa] = { P: 0, J: 0, V: 0, E: 0, D: 0, GP: 0, GC: 0 };
+    if (!tabela[fora]) tabela[fora] = { P: 0, J: 0, V: 0, E: 0, D: 0, GP: 0, GC: 0 };
 
-    if(gCasa===null || gFora===null) return;
+    if (gCasa === null || gFora === null) return;
 
     tabela[casa].J++;
     tabela[fora].J++;
@@ -95,25 +78,25 @@ function calcularTabela(jogos, grupo, placares) {
     tabela[fora].GP += gFora;
     tabela[fora].GC += gCasa;
 
-    if(gCasa > gFora){
-      tabela[casa].P+=3;
+    if (gCasa > gFora) {
+      tabela[casa].P += 3;
       tabela[casa].V++;
       tabela[fora].D++;
-    } else if(gCasa < gFora){
-      tabela[fora].P+=3;
+    } else if (gCasa < gFora) {
+      tabela[fora].P += 3;
       tabela[fora].V++;
       tabela[casa].D++;
     } else {
-      tabela[casa].P+=1;
-      tabela[fora].P+=1;
+      tabela[casa].P += 1;
+      tabela[fora].P += 1;
       tabela[casa].E++;
       tabela[fora].E++;
     }
   });
 
-  return Object.entries(tabela).map(([time,dados])=>(
-    {...dados, time, SG: dados.GP - dados.GC}
-  )).sort((a,b)=> b.P - a.P || b.SG - a.SG || b.GP - a.GP);
+  return Object.entries(tabela)
+    .map(([time, dados]) => ({ ...dados, time, SG: dados.GP - dados.GC }))
+    .sort((a, b) => b.P - a.P || b.SG - a.SG || b.GP - a.GP);
 }
 
 function gruposEstaoCompletos(placares) {
@@ -128,53 +111,69 @@ function gruposEstaoCompletos(placares) {
   return true;
 }
 
-function obterClassificados(placares) {
-  const lista = [];
-  for (const [grupo, times] of Object.entries(grupos)) {
-    const jogos = gerarJogos(times);
-    const tabela = calcularTabela(jogos, grupo, placares);
-    const primeiro = tabela[0];
-    const segundo = tabela[1];
-    if (primeiro) {
-      lista.push({
-        nome: primeiro.time,
-        grupo,
-        pos: 1,
-        grpPts: primeiro.P,
-        grpSG: primeiro.SG,
-        grpGP: primeiro.GP,
-        grpGC: primeiro.GC,
-      });
-    }
-    if (segundo) {
-      lista.push({
-        nome: segundo.time,
-        grupo,
-        pos: 2,
-        grpPts: segundo.P,
-        grpSG: segundo.SG,
-        grpGP: segundo.GP,
-        grpGC: segundo.GC,
-      });
-    }
-  }
-  return lista;
-}
-
-function rotuloTime(t) {
-  if (!t) return "—";
-  if (t.pos === 1) return `${t.nome} (1º grp. ${t.grupo})`;
-  if (t.pos === 2) return `${t.nome} (2º grp. ${t.grupo})`;
-  return `${t.nome} (grp. ${t.grupo})`;
-}
-
-export default function CopaLibertadoresSimulator(){
-  const [placares,setPlacares] = useState({});
+export default function WorldCup2026Simulator() {
+  const [placares, setPlacares] = useState({});
   const [rodadaPorGrupo, setRodadaPorGrupo] = useState({});
   const [fase, setFase] = useState("grupos");
-  const [sorteio, setSorteio] = useState(null);
   const [koPlacares, setKoPlacares] = useState({});
   const [pixCopiado, setPixCopiado] = useState(false);
+
+  const melhoresTerceiros = useMemo(
+    () =>
+      calcularOitoMelhoresTerceiros(
+        grupos,
+        placares,
+        gerarJogos,
+        calcularTabela
+      ),
+    [placares]
+  );
+
+  const tabelaPorGrupoLetra = useMemo(() => {
+    const o = {};
+    for (const [letra, times] of Object.entries(grupos)) {
+      const jogos = gerarJogos(times);
+      o[letra] = calcularTabela(jogos, letra, placares);
+    }
+    return o;
+  }, [placares]);
+
+  const segundaFase = useMemo(
+    () => montarSegundaFase16(tabelaPorGrupoLetra, melhoresTerceiros),
+    [tabelaPorGrupoLetra, melhoresTerceiros]
+  );
+
+  const r32Matches = useMemo(() => {
+    if (!segundaFase.ok) return [];
+    return segundaFase.partidas.map((p) => ({
+      id: `wc-r32-${p.id}`,
+      sideA: p.nomeA ? { nome: p.nomeA } : null,
+      sideB: p.nomeB ? { nome: p.nomeB } : null,
+    }));
+  }, [segundaFase]);
+
+  const koChave = useMemo(
+    () =>
+      segundaFase.ok
+        ? segundaFase.partidas.map((p) => `${p.nomeA}|${p.nomeB}`).join(";")
+        : "",
+    [segundaFase]
+  );
+
+  useEffect(() => {
+    setKoPlacares({});
+  }, [koChave]);
+
+  const bracket = useMemo(
+    () => montarChaveamentoWc(r32Matches, koPlacares),
+    [r32Matches, koPlacares]
+  );
+
+  const campeao = useMemo(() => {
+    const f = bracket.final;
+    if (!f?.sideA || !f?.sideB) return null;
+    return vencedorJogoUnico(f, koPlacares);
+  }, [bracket, koPlacares]);
 
   const mudarRodadaGrupo = useCallback((grupo, delta) => {
     setRodadaPorGrupo((prev) => {
@@ -187,29 +186,6 @@ export default function CopaLibertadoresSimulator(){
     });
   }, []);
 
-  const gruposCompletos = useMemo(() => gruposEstaoCompletos(placares), [placares]);
-  const classificados = useMemo(() => obterClassificados(placares), [placares]);
-  const chaveKey = useMemo(
-    () => classificados.map((c) => `${c.grupo}-${c.pos}-${c.nome}`).join("|"),
-    [classificados]
-  );
-
-  useEffect(() => {
-    setSorteio(null);
-    setKoPlacares({});
-  }, [chaveKey]);
-
-  const handleChange = (key, lado, valor) => {
-    const n = valor === "" ? null : Number(valor);
-    setPlacares(prev => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        [lado]: Number.isFinite(n) ? n : null
-      }
-    }));
-  };
-
   const handleKoChange = useCallback((id, lado, valor) => {
     const n = valor === "" ? null : Number(valor);
     setKoPlacares((prev) => ({
@@ -220,6 +196,17 @@ export default function CopaLibertadoresSimulator(){
       },
     }));
   }, []);
+
+  const handleChange = (key, lado, valor) => {
+    const n = valor === "" ? null : Number(valor);
+    setPlacares((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        [lado]: Number.isFinite(n) ? n : null,
+      },
+    }));
+  };
 
   const simularGrupo = useCallback((grupo) => {
     const times = grupos[grupo];
@@ -273,154 +260,15 @@ export default function CopaLibertadoresSimulator(){
     }
   }, []);
 
-  const realizarSorteio = () => {
-    if (!gruposCompletos || classificados.length !== 16) return;
-    setKoPlacares({});
-    const s = sortearOitavas(classificados);
-    if (!s) {
-      window.alert("Não foi possível montar o sorteio. Tente «Novo sorteio».");
-      return;
-    }
-    setSorteio(s);
-  };
+  const todosGruposCompletos = gruposEstaoCompletos(placares);
 
-  const bracket = useMemo(
-    () => montarChaveamento(sorteio, koPlacares),
-    [sorteio, koPlacares]
-  );
-
-  const campeao = useMemo(() => {
-    const final = bracket.f[0];
-    if (!final?.sideA || !final?.sideB) return null;
-    return vencedorFinal(final, koPlacares);
-  }, [bracket.f, koPlacares]);
-
-  const renderConfrontoDuplo = (tie, opts = {}) => {
-    const { disabled } = opts;
-    const idaId = `${tie.id}-ida`;
-    const volId = `${tie.id}-volta`;
-    const penId = `${tie.id}-pen`;
-
-    if (!tie.sideA || !tie.sideB || !tie.ida || !tie.volta) {
-      return (
-        <div key={tie.id} className="ko-tie ko-tie--placeholder">
-          <p className="ko-tie__wait">Aguardando fase anterior</p>
-        </div>
-      );
-    }
-
-    const ag = agregadoConfronto(tie, koPlacares);
-    const pen = placarKo(koPlacares, penId);
-    const mostrarPen = ag.completo && ag.empatado;
-    const penTie =
-      mostrarPen && pen.a != null && pen.b != null && pen.a === pen.b;
-
-    const rowLeg = (label, subId, mandante, visitante) => {
-      const p = placarKo(koPlacares, subId);
-      return (
-        <div className="ko-leg" key={subId}>
-          <div className="ko-leg__label">{label}</div>
-          <div className="ko-leg__row">
-            <div className="ko-leg__team ko-leg__team--home">
-              <span className="team-line team-line--home" title={rotuloTime(mandante)}>
-                <span className="team-line__name">{mandante.nome}</span>
-                <Escudo nome={mandante.nome} />
-              </span>
-            </div>
-            <div className="ko-leg__score">
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                disabled={disabled}
-                className="score-input"
-                placeholder="–"
-                value={p.casa ?? ""}
-                onChange={(e) => handleKoChange(subId, "casa", e.target.value)}
-              />
-              <span className="score-sep">×</span>
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                disabled={disabled}
-                className="score-input"
-                placeholder="–"
-                value={p.fora ?? ""}
-                onChange={(e) => handleKoChange(subId, "fora", e.target.value)}
-              />
-            </div>
-            <div className="ko-leg__team ko-leg__team--away">
-              <span className="team-line team-line--away" title={rotuloTime(visitante)}>
-                <Escudo nome={visitante.nome} />
-                <span className="team-line__name">{visitante.nome}</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div
-        key={tie.id}
-        className={`ko-tie ${disabled ? "ko-tie--disabled" : ""} ${penTie ? "ko-tie--tie" : ""}`}
-      >
-        {rowLeg("Ida", idaId, tie.ida.mandante, tie.ida.visitante)}
-        {rowLeg("Volta", volId, tie.volta.mandante, tie.volta.visitante)}
-        {ag.completo && (
-          <div className="ko-tie__agg">
-            Agregado: <strong>{tie.sideA.nome}</strong> {ag.agA} × {ag.agB}{" "}
-            <strong>{tie.sideB.nome}</strong>
-          </div>
-        )}
-        {mostrarPen && (
-          <div className="ko-tie__pen">
-            <span className="ko-tie__pen-label">Pênaltis</span>
-            <div className="ko-tie__pen-row">
-              <span className="ko-tie__pen-side" title={tie.sideA.nome}>
-                {tie.sideA.nome}
-              </span>
-              <div className="ko-tie__pen-score">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  disabled={disabled}
-                  className="score-input score-input--pen"
-                  placeholder="–"
-                  value={pen.a ?? ""}
-                  onChange={(e) => handleKoChange(penId, "a", e.target.value)}
-                />
-                <span className="score-sep">×</span>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  disabled={disabled}
-                  className="score-input score-input--pen"
-                  placeholder="–"
-                  value={pen.b ?? ""}
-                  onChange={(e) => handleKoChange(penId, "b", e.target.value)}
-                />
-              </div>
-              <span className="ko-tie__pen-side" title={tie.sideB.nome}>
-                {tie.sideB.nome}
-              </span>
-            </div>
-          </div>
-        )}
-        {penTie && (
-          <p className="ko-match__warn">
-            Empate — altere um dos valores (pênaltis empatados).
-          </p>
-        )}
-      </div>
-    );
-  };
-
-  const renderFinal = (match) => {
-    const disabled = !match.sideA || !match.sideB || match.pendingTie;
+  const renderJogoUnico = (match, opts = {}) => {
+    const { disabled: disabledOpt } = opts;
+    const disabled =
+      disabledOpt ||
+      !match.sideA ||
+      !match.sideB ||
+      match.pendingTie;
     const p = placarKo(koPlacares, match.id);
     const regTie = p.a != null && p.b != null && p.a === p.b;
     const penId = `${match.id}-pen`;
@@ -434,7 +282,7 @@ export default function CopaLibertadoresSimulator(){
         className={`ko-match ${disabled ? "ko-match--disabled" : ""} ${penTie ? "ko-match--tie" : ""}`}
       >
         <div className="ko-match__teams">
-          <span className="ko-match__team" title={match.sideA ? rotuloTime(match.sideA) : ""}>
+          <span className="ko-match__team" title={match.sideA?.nome ?? ""}>
             {match.sideA ? (
               <span className="team-line team-line--away">
                 <Escudo nome={match.sideA.nome} />
@@ -467,7 +315,7 @@ export default function CopaLibertadoresSimulator(){
               onChange={(e) => handleKoChange(match.id, "b", e.target.value)}
             />
           </div>
-          <span className="ko-match__team ko-match__team--away" title={match.sideB ? rotuloTime(match.sideB) : ""}>
+          <span className="ko-match__team ko-match__team--away" title={match.sideB?.nome ?? ""}>
             {match.sideB ? (
               <span className="team-line team-line--home">
                 <span className="team-line__name">{match.sideB.nome}</span>
@@ -482,8 +330,8 @@ export default function CopaLibertadoresSimulator(){
           <div className="ko-tie__pen" role="group" aria-label="Pênaltis">
             <span className="ko-tie__pen-label">Pênaltis</span>
             <div className="ko-tie__pen-row">
-              <span className="ko-tie__pen-side" title={match.sideA.nome}>
-                {match.sideA.nome}
+              <span className="ko-tie__pen-side" title={match.sideA?.nome}>
+                {match.sideA?.nome}
               </span>
               <div className="ko-tie__pen-score">
                 <input
@@ -508,13 +356,12 @@ export default function CopaLibertadoresSimulator(){
                   onChange={(e) => handleKoChange(penId, "b", e.target.value)}
                 />
               </div>
-              <span className="ko-tie__pen-side" title={match.sideB.nome}>
-                {match.sideB.nome}
+              <span className="ko-tie__pen-side" title={match.sideB?.nome}>
+                {match.sideB?.nome}
               </span>
             </div>
           </div>
         )}
-
         {penTie && (
           <p className="ko-match__warn">Empate — altere um dos valores (pênaltis empatados).</p>
         )}
@@ -523,7 +370,7 @@ export default function CopaLibertadoresSimulator(){
   };
 
   return (
-    <div className="app-root theme-libertadores">
+    <div className="app-root theme-world-cup-2026">
       <header className="app-header">
         <Link className="app-back-home" to="/">
           ← Competições
@@ -543,24 +390,36 @@ export default function CopaLibertadoresSimulator(){
             role="tab"
             aria-selected={fase === "mataMata"}
             className={`phase-tabs__btn ${fase === "mataMata" ? "phase-tabs__btn--active" : ""}`}
-            disabled={!gruposCompletos}
-            title={!gruposCompletos ? "Preencha todos os placares da fase de grupos" : undefined}
-            onClick={() => gruposCompletos && setFase("mataMata")}
+            disabled={!todosGruposCompletos}
+            title={
+              !todosGruposCompletos
+                ? "Preencha todos os placares da fase de grupos"
+                : undefined
+            }
+            onClick={() => todosGruposCompletos && setFase("mataMata")}
           >
             Mata-mata
           </button>
         </div>
-        <h1 className="app-title">Simulador Copa Libertadores 2026</h1>
+        <h1 className="app-title">Simulador Copa do Mundo 2026</h1>
         <p className="app-subtitle">
-          {fase === "grupos"
-            ? "Preencha todos os resultados da fase de grupos para liberar a fase mata-mata. Os dois melhores de cada grupo avançam. O botão “Simular grupo” preenche automaticamente os resultados restantes."
-            : "Clique em “Sortear” para gerar o chaveamento. Os primeiros colocados decidem em casa nas oitavas. A melhor campanha na fase de grupos decide em casa nas quartas e na semifinal. Empates no placar agregado ou na final são decididos nos pênaltis."}
+          {fase === "grupos" ? (
+            <>
+              12 grupos com quatro seleções cada. Turno único: cada seleção joga três partidas. Entre os 12 terceiros
+              lugares, classificam os <strong>8 melhores</strong> (desempate: pontos, saldo, gols marcados; depois ordem
+              alfabética em empate). Os dois primeiros de cada grupo e esses oito terceiros seguem para o mata-mata (32
+              vagas).
+            </>
+          ) : null}
+          {todosGruposCompletos && fase === "grupos" && (
+            <span className="app-subtitle__badge"> Todos os grupos completos.</span>
+          )}
         </p>
       </header>
 
       {fase === "grupos" && (
       <div className="groups-grid">
-        {Object.entries(grupos).map(([grupo,times])=>{
+        {Object.entries(grupos).map(([grupo, times]) => {
           const jogos = gerarJogos(times);
           const tabela = calcularTabela(jogos, grupo, placares);
           const idxRodada = rodadaPorGrupo[grupo] ?? 0;
@@ -603,7 +462,7 @@ export default function CopaLibertadoresSimulator(){
               </div>
 
               <div className="group-card__matches">
-                {jogosRodada.map((j, offset)=>{
+                {jogosRodada.map((j, offset) => {
                   const i = inicio + offset;
                   const key = `${grupo}-${i}`;
                   const p = placares[key] || {};
@@ -623,7 +482,7 @@ export default function CopaLibertadoresSimulator(){
                           className="score-input"
                           placeholder="–"
                           value={p.casa ?? ""}
-                          onChange={(e)=>handleChange(key,"casa",e.target.value)}
+                          onChange={(e) => handleChange(key, "casa", e.target.value)}
                         />
                         <span className="score-sep">×</span>
                         <input
@@ -633,7 +492,7 @@ export default function CopaLibertadoresSimulator(){
                           className="score-input"
                           placeholder="–"
                           value={p.fora ?? ""}
-                          onChange={(e)=>handleChange(key,"fora",e.target.value)}
+                          onChange={(e) => handleChange(key, "fora", e.target.value)}
                         />
                       </div>
                       <div className="match-row__team match-row__team--away" title={j.fora}>
@@ -648,14 +507,23 @@ export default function CopaLibertadoresSimulator(){
               </div>
 
               <div className="group-card__table-wrap">
-                <div className="standings-legend">
-                  <span className="standings-legend__dot" aria-hidden />
-                  <span>Classificação às oitavas</span>
+                <div className="standings-legend standings-legend--wc">
+                  <span className="standings-legend__row">
+                    <span className="standings-legend__dot" aria-hidden />
+                    <span>1º e 2º do grupo</span>
+                  </span>
+                  <span className="standings-legend__row">
+                    <span
+                      className="standings-legend__dot standings-legend__dot--third-slot"
+                      aria-hidden
+                    />
+                    <span>3º se estiver entre os 8 melhores</span>
+                  </span>
                 </div>
                 <table className="standings-table">
                   <thead>
                     <tr>
-                      <th>Time</th>
+                      <th>Seleção</th>
                       <th>Pts</th>
                       <th>J</th>
                       <th>V</th>
@@ -667,8 +535,21 @@ export default function CopaLibertadoresSimulator(){
                     </tr>
                   </thead>
                   <tbody>
-                    {tabela.map((t, idx)=>(
-                      <tr key={t.time} className={idx < 2 ? "row-qualify" : ""}>
+                    {tabela.map((t, idx) => {
+                      let rowClass = "";
+                      if (idx < 2) rowClass = "row-qualify";
+                      else if (
+                        idx === 2 &&
+                        terceiroNosOitoMelhores(
+                          grupo,
+                          t.time,
+                          melhoresTerceiros.classificados
+                        )
+                      ) {
+                        rowClass = "row-qualify-third";
+                      }
+                      return (
+                      <tr key={t.time} className={rowClass}>
                         <td title={t.time}>
                           <span className="team-line team-line--table">
                             <Escudo nome={t.time} />
@@ -684,7 +565,8 @@ export default function CopaLibertadoresSimulator(){
                         <td>{t.GC}</td>
                         <td>{t.SG}</td>
                       </tr>
-                    ))}
+                    );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -694,7 +576,11 @@ export default function CopaLibertadoresSimulator(){
                   type="button"
                   className="group-card__simulate"
                   disabled={!temPendencias}
-                  title={!temPendencias ? "Nada para simular neste grupo" : "Preenche placares vazios aleatoriamente"}
+                  title={
+                    !temPendencias
+                      ? "Nada para simular neste grupo"
+                      : "Preenche placares vazios aleatoriamente"
+                  }
                   onClick={() => simularGrupo(grupo)}
                 >
                   Simular grupo
@@ -708,63 +594,77 @@ export default function CopaLibertadoresSimulator(){
 
       {fase === "mataMata" && (
         <div className="knockout">
-          {!sorteio && (
-            <div className="knockout__intro">
-              <p className="knockout__intro-text">
-                Sorteio dos 1ºs de grupo contra 2ºs de grupos (dois potes). Ida com mandante do 2º; volta com mandante do 1º. Empate no agregado decide nos pênaltis.
-              </p>
-              <button type="button" className="knockout__sortear" onClick={realizarSorteio}>
-                Sortear oitavas de final
-              </button>
-            </div>
+          {!segundaFase.ok && (
+            <p className="wc-knockout__err" role="alert">
+              {segundaFase.erro}
+            </p>
           )}
+          {segundaFase.ok && (
+            <div className="bracket">
+              <section className="bracket__round">
+                <h2 className="bracket__title">Dezesseis avos de final</h2>
+                <div className="bracket__matches">
+                  {bracket.r32.map((m) =>
+                    renderJogoUnico(m, { disabled: false })
+                  )}
+                </div>
+              </section>
 
-          {sorteio && (
-            <>
-              <div className="knockout__actions">
-                <button type="button" className="knockout__resortear" onClick={realizarSorteio}>
-                  Novo sorteio
-                </button>
-                <span className="knockout__hint">Isso zera os placares do mata-mata.</span>
-              </div>
+              <section className="bracket__round">
+                <h2 className="bracket__title">Oitavas de final</h2>
+                <div className="bracket__matches">
+                  {bracket.r16.map((m) =>
+                    renderJogoUnico(m, {
+                      disabled: !m.sideA || !m.sideB || m.pendingTie,
+                    })
+                  )}
+                </div>
+              </section>
 
-              <div className="bracket">
-                <section className="bracket__round">
-                  <h2 className="bracket__title">Oitavas de final</h2>
-                  <div className="bracket__matches bracket__matches--ties">
-                    {bracket.r16.map((m) => renderConfrontoDuplo(m, { disabled: false }))}
-                  </div>
-                </section>
+              <section className="bracket__round">
+                <h2 className="bracket__title">Quartas de final</h2>
+                <div className="bracket__matches">
+                  {bracket.qf.map((m) =>
+                    renderJogoUnico(m, {
+                      disabled: !m.sideA || !m.sideB || m.pendingTie,
+                    })
+                  )}
+                </div>
+              </section>
 
-                <section className="bracket__round">
-                  <h2 className="bracket__title">Quartas de final</h2>
-                  <div className="bracket__matches bracket__matches--ties">
-                    {bracket.qf.map((m) =>
-                      renderConfrontoDuplo(m, {
-                        disabled: !m.sideA || !m.sideB || m.pendingTie,
-                      })
-                    )}
-                  </div>
-                </section>
+              <section className="bracket__round">
+                <h2 className="bracket__title">Semifinais</h2>
+                <div className="bracket__matches">
+                  {bracket.sf.map((m) =>
+                    renderJogoUnico(m, {
+                      disabled: !m.sideA || !m.sideB || m.pendingTie,
+                    })
+                  )}
+                </div>
+              </section>
 
-                <section className="bracket__round">
-                  <h2 className="bracket__title">Semifinais</h2>
-                  <div className="bracket__matches bracket__matches--ties">
-                    {bracket.sf.map((m) =>
-                      renderConfrontoDuplo(m, {
-                        disabled: !m.sideA || !m.sideB || m.pendingTie,
-                      })
-                    )}
-                  </div>
-                </section>
+              <section className="bracket__round bracket__round--third">
+                <h2 className="bracket__title">Decisão de 3º lugar</h2>
+                <div className="bracket__matches">
+                  {renderJogoUnico(bracket.thirdPlace, {
+                    disabled:
+                      !bracket.thirdPlace.sideA ||
+                      !bracket.thirdPlace.sideB,
+                  })}
+                </div>
+              </section>
 
-                <section className="bracket__round bracket__round--final">
-                  <h2 className="bracket__title">Final</h2>
-                  <div className="bracket__matches">
-                    {bracket.f.map((m) => renderFinal(m))}
-                  </div>
-                </section>
-              </div>
+              <section className="bracket__round bracket__round--final">
+                <h2 className="bracket__title">Final</h2>
+                <div className="bracket__matches">
+                  {renderJogoUnico(bracket.final, {
+                    disabled:
+                      !bracket.final.sideA ||
+                      !bracket.final.sideB ||
+                      bracket.final.pendingTie,
+                  })}
+                </div>
+              </section>
 
               {campeao && campeao !== "tie" && (
                 <div className="knockout__champion">
@@ -775,7 +675,7 @@ export default function CopaLibertadoresSimulator(){
                   </span>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       )}
@@ -803,13 +703,13 @@ export default function CopaLibertadoresSimulator(){
             Se quiser apoiar com uma pequena contribuição para manter o projeto e ajudar a criar novas ideias, fique à vontade para usar PIX.
           </p>
           <div className="support-footer__actions">
-          <button
-            type="button"
-            className={`support-footer__btn support-footer__btn--pix ${pixCopiado ? "is-copied" : ""}`}
-            onClick={copiarChavePix}
-          >
-            {pixCopiado ? "Pix copiado!" : "Copiar chave Pix"}
-          </button>
+            <button
+              type="button"
+              className={`support-footer__btn support-footer__btn--pix ${pixCopiado ? "is-copied" : ""}`}
+              onClick={copiarChavePix}
+            >
+              {pixCopiado ? "Pix copiado!" : "Copiar chave Pix"}
+            </button>
           </div>
         </section>
       </footer>
