@@ -850,6 +850,14 @@
   gap: 0.85rem;
 }
 
+.bracket__round--final .bracket__matches,
+.bracket__round--third .bracket__matches {
+  max-width: 22rem;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .ko-tie {
   padding: 0.6rem 0.55rem;
   border-radius: var(--radius-sm);
@@ -1301,6 +1309,169 @@
   box-shadow: 0 6px 18px rgba(47, 91, 255, 0.35);
 }
 
+/* Copa do Mundo 2026 */
+.theme-world-cup-2026 {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --wc-btn: #3a86ff;
+  --wc-btn-hover: #4cc9f0;
+  --wc-green: #1faa59;
+  --wc-red: #e63946;
+  --bg-deep: #050a14;
+  --bg-card: #0b1f3b;
+  --bg-card-hover: #0f2a4d;
+  --gold: #3a86ff;
+  --gold-dim: #2a6fd4;
+  --gold-hover-bright: #4cc9f0;
+  --border: rgba(58, 134, 255, 0.28);
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --accent-green: #1faa59;
+  --input-bg: #050a14;
+  --sortear-fg: #ffffff;
+  --bg-glow-a: color-mix(in srgb, #3a86ff 18%, transparent);
+  --bg-glow-b: color-mix(in srgb, #1faa59 10%, transparent);
+  --gradient-base-start: #050a14;
+  --gradient-base-end: #071018;
+  --support-donation-end: color-mix(in srgb, #0b1f3b 70%, #000000);
+  --pill-bg: rgba(58, 134, 255, 0.15);
+  --support-footer-bg: rgba(11, 31, 59, 0.92);
+  --support-footer-text: rgba(255, 255, 255, 0.85);
+  --support-footer-btn-text: #ffffff;
+  --support-footer-btn-bg: #3a86ff;
+  --support-footer-btn-border: rgba(76, 201, 240, 0.45);
+  --support-block-border: rgba(58, 134, 255, 0.35);
+  --support-block-feedback-bg: rgba(5, 10, 20, 0.55);
+  --champion-bg-end: rgba(31, 170, 89, 0.2);
+  --support-footer-btn-hover-bg: #4cc9f0;
+  --support-footer-btn-hover-border: rgba(255, 255, 255, 0.35);
+  --input-border: rgba(58, 134, 255, 0.45);
+  --card-hover-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+  --qualify: rgba(31, 170, 89, 0.16);
+  --qualify-border: rgba(31, 170, 89, 0.55);
+}
+
+.theme-world-cup-2026 .app-title {
+  background: linear-gradient(135deg, #ffffff 0%, #7eb8ff 45%, #4cc9f0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-world-cup-2026 .app-subtitle__badge {
+  color: var(--wc-green);
+  font-weight: 600;
+}
+
+.theme-world-cup-2026 .app-back-home:hover {
+  color: #ffffff;
+  border-color: rgba(76, 201, 240, 0.55);
+  background: rgba(58, 134, 255, 0.35);
+  box-shadow: 0 0 20px rgba(58, 134, 255, 0.25);
+}
+
+.theme-world-cup-2026 .group-card__simulate {
+  background: var(--wc-btn);
+  color: #ffffff;
+  border-color: rgba(76, 201, 240, 0.45);
+}
+
+.theme-world-cup-2026 .group-card__simulate:hover:not(:disabled) {
+  background: var(--wc-btn-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #050a14;
+}
+
+.theme-world-cup-2026 .standings-legend__dot {
+  background: var(--wc-green);
+}
+
+.theme-world-cup-2026 .support-footer__btn:hover {
+  background: var(--wc-btn-hover);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 18px rgba(58, 134, 255, 0.35);
+}
+
+.theme-world-cup-2026 .standings-table .team-line__name {
+  word-break: break-word;
+}
+
+.theme-world-cup-2026 .standings-legend--wc {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.theme-world-cup-2026 .standings-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.theme-world-cup-2026 .standings-legend__dot--third-slot {
+  background: var(--wc-btn-hover);
+}
+
+.theme-world-cup-2026 .standings-table tbody tr.row-qualify-third {
+  background: color-mix(in srgb, var(--wc-btn) 14%, transparent);
+  box-shadow: inset 3px 0 0 var(--wc-btn-hover);
+}
+
+.theme-world-cup-2026 .standings-table tbody tr.row-qualify-third td.col-pts {
+  color: var(--wc-btn-hover);
+}
+
+.theme-world-cup-2026 .phase-tabs {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(58, 134, 255, 0.25);
+}
+
+.theme-world-cup-2026 .phase-tabs__btn--active {
+  color: var(--wc-btn-hover);
+  background: color-mix(in srgb, var(--wc-btn) 18%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wc-btn-hover) 40%, transparent);
+}
+
+.theme-world-cup-2026 .knockout {
+  max-width: 56rem;
+  margin: 0 auto 2.5rem;
+  padding: 0 1rem;
+}
+
+.theme-world-cup-2026 .wc-knockout__err {
+  color: var(--wc-red);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.theme-world-cup-2026 .bracket__round {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+  box-shadow: var(--shadow);
+}
+
+.theme-world-cup-2026 .bracket__round--third {
+  border-color: color-mix(in srgb, var(--wc-btn-hover) 35%, var(--border));
+}
+
+.theme-world-cup-2026 .bracket__round--final {
+  border-color: color-mix(in srgb, var(--wc-green) 45%, var(--border));
+  box-shadow:
+    var(--shadow),
+    0 0 0 1px color-mix(in srgb, var(--wc-green) 28%, transparent);
+}
+
+.theme-world-cup-2026 .ko-tie:not(.ko-tie--placeholder):hover,
+.theme-world-cup-2026 .ko-match:not(.ko-match--disabled):hover {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--wc-btn-hover) 40%, transparent);
+}
+
+@media (min-width: 1100px) {
+  .theme-world-cup-2026 .groups-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 768px) {
   .bracket__matches:not(.bracket__matches--ties) {
     display: grid;
@@ -1314,7 +1485,8 @@
     gap: 0.55rem 0.75rem;
   }
 
-  .bracket__round--final .bracket__matches {
+  .bracket__round--final .bracket__matches,
+  .bracket__round--third .bracket__matches {
     grid-template-columns: 1fr;
     max-width: 22rem;
     margin: 0 auto;

@@ -16,4 +16,8 @@ test('renders home with competitions list', () => {
     'href',
     '/champions-league'
   );
+  expect(screen.getByRole('link', { name: /Copa do Mundo 2026/i })).toHaveAttribute(
+    'href',
+    '/copa-do-mundo-2026'
+  );
 });

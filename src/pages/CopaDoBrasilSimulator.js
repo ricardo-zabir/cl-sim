@@ -28,7 +28,7 @@ function Escudo({ nome }) {
 }
 
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
-const CHAVE_PIX_TEMPLATE = "ricardofonseca.zabir@hotmail.com";
+const CHAVE_PIX_TEMPLATE = "75df5998-b352-4f8b-a0c1-38bedec43b2c";
 
 function rotuloTime(t) {
   if (!t) return "—";
