@@ -638,6 +638,19 @@
   -moz-appearance: textfield;
 }
 
+.score-input:disabled,
+.score-input--oficial {
+  cursor: default;
+  opacity: 0.92;
+  color: color-mix(in srgb, var(--text) 88%, var(--text-muted));
+  border-color: color-mix(in srgb, var(--input-border) 70%, transparent);
+  box-shadow: none;
+}
+
+.match-row--oficial .score-sep {
+  opacity: 0.85;
+}
+
 .score-sep {
   font-size: 0.65rem;
   font-weight: 600;

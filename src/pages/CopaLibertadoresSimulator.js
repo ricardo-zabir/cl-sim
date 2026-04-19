@@ -9,6 +9,10 @@ import {
   agregadoConfronto,
   placarKo,
 } from "../knockoutLogic";
+import {
+  PLACARES_OFICIAIS_GRUPOS,
+  placarGrupoEhOficial,
+} from "../libertaOficialGrupos";
 
 function Escudo({ nome }) {
   const src = escudosPorNome[nome];
@@ -169,8 +173,16 @@ function rotuloTime(t) {
 }
 
 export default function CopaLibertadoresSimulator(){
-  const [placares,setPlacares] = useState({});
-  const [rodadaPorGrupo, setRodadaPorGrupo] = useState({});
+  const [placares, setPlacares] = useState(() => ({
+    ...PLACARES_OFICIAIS_GRUPOS,
+  }));
+  const [rodadaPorGrupo, setRodadaPorGrupo] = useState(() => {
+    const inicial = {};
+    for (const g of Object.keys(grupos)) {
+      inicial[g] = 2;
+    }
+    return inicial;
+  });
   const [fase, setFase] = useState("grupos");
   const [sorteio, setSorteio] = useState(null);
   const [koPlacares, setKoPlacares] = useState({});
@@ -200,6 +212,7 @@ export default function CopaLibertadoresSimulator(){
   }, [chaveKey]);
 
   const handleChange = (key, lado, valor) => {
+    if (placarGrupoEhOficial(key)) return;
     const n = valor === "" ? null : Number(valor);
     setPlacares(prev => ({
       ...prev,
@@ -232,6 +245,7 @@ export default function CopaLibertadoresSimulator(){
 
       jogos.forEach((_, i) => {
         const key = `${grupo}-${i}`;
+        if (placarGrupoEhOficial(key)) return;
         const cur = next[key] || {};
 
         const casaVazia = cur.casa == null;
@@ -607,8 +621,12 @@ export default function CopaLibertadoresSimulator(){
                   const i = inicio + offset;
                   const key = `${grupo}-${i}`;
                   const p = placares[key] || {};
+                  const travado = placarGrupoEhOficial(key);
                   return (
-                    <div key={key} className="match-row">
+                    <div
+                      key={key}
+                      className={`match-row${travado ? " match-row--oficial" : ""}`}
+                    >
                       <div className="match-row__team match-row__team--home" title={j.casa}>
                         <span className="team-line team-line--home">
                           <span className="team-line__name">{j.casa}</span>
@@ -620,8 +638,10 @@ export default function CopaLibertadoresSimulator(){
                           type="number"
                           inputMode="numeric"
                           min={0}
-                          className="score-input"
+                          disabled={travado}
+                          className={`score-input${travado ? " score-input--oficial" : ""}`}
                           placeholder="–"
+                          title={travado ? "Resultado oficial — não editável" : undefined}
                           value={p.casa ?? ""}
                           onChange={(e)=>handleChange(key,"casa",e.target.value)}
                         />
@@ -630,8 +650,10 @@ export default function CopaLibertadoresSimulator(){
                           type="number"
                           inputMode="numeric"
                           min={0}
-                          className="score-input"
+                          disabled={travado}
+                          className={`score-input${travado ? " score-input--oficial" : ""}`}
                           placeholder="–"
+                          title={travado ? "Resultado oficial — não editável" : undefined}
                           value={p.fora ?? ""}
                           onChange={(e)=>handleChange(key,"fora",e.target.value)}
                         />

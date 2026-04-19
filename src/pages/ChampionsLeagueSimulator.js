@@ -7,6 +7,10 @@ import {
   montarChaveamentoChampionsLeague,
 } from "../championsLeagueQuartas";
 import {
+  PLACARES_QUARTAS_UCL_INICIAL,
+  placarQuartasUclEhOficial,
+} from "../uclOficialQuartas";
+import {
   vencedorFinal,
   agregadoConfronto,
   placarKo,
@@ -37,7 +41,9 @@ function rotuloTime(t) {
 export default function ChampionsLeagueSimulator() {
   const quartasTies = useMemo(() => montarQuartasChampionsLeague(), []);
 
-  const [koPlacares, setKoPlacares] = useState({});
+  const [koPlacares, setKoPlacares] = useState(() => ({
+    ...PLACARES_QUARTAS_UCL_INICIAL,
+  }));
   const [pixCopiado, setPixCopiado] = useState(false);
 
   const bracket = useMemo(
@@ -46,6 +52,7 @@ export default function ChampionsLeagueSimulator() {
   );
 
   const handleKoChange = useCallback((id, lado, valor) => {
+    if (placarQuartasUclEhOficial(id)) return;
     const n = valor === "" ? null : Number(valor);
     setKoPlacares((prev) => ({
       ...prev,
@@ -106,8 +113,10 @@ export default function ChampionsLeagueSimulator() {
 
     const rowLeg = (label, subId, mandante, visitante) => {
       const p = placarKo(koPlacares, subId);
+      const travado = placarQuartasUclEhOficial(subId);
+      const inputDisabled = disabled || travado;
       return (
-        <div className="ko-leg" key={subId}>
+        <div className={`ko-leg${travado ? " ko-leg--oficial" : ""}`} key={subId}>
           <div className="ko-leg__label">{label}</div>
           <div className="ko-leg__row">
             <div className="ko-leg__team ko-leg__team--home">
@@ -121,9 +130,10 @@ export default function ChampionsLeagueSimulator() {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                disabled={disabled}
-                className="score-input"
+                disabled={inputDisabled}
+                className={`score-input${travado ? " score-input--oficial" : ""}`}
                 placeholder="–"
+                title={travado ? "Resultado oficial — não editável" : undefined}
                 value={p.casa ?? ""}
                 onChange={(e) => handleKoChange(subId, "casa", e.target.value)}
               />
@@ -132,9 +142,10 @@ export default function ChampionsLeagueSimulator() {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                disabled={disabled}
-                className="score-input"
+                disabled={inputDisabled}
+                className={`score-input${travado ? " score-input--oficial" : ""}`}
                 placeholder="–"
+                title={travado ? "Resultado oficial — não editável" : undefined}
                 value={p.fora ?? ""}
                 onChange={(e) => handleKoChange(subId, "fora", e.target.value)}
               />
