@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
 import { escudoCopaPorNome } from "../escudosCopaBrasil";
@@ -30,6 +30,10 @@ function Escudo({ nome }) {
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
 const CHAVE_PIX_TEMPLATE = "75df5998-b352-4f8b-a0c1-38bedec43b2c";
 
+const N_CONFRONTOS_OITAVAS = 8;
+const N_CONFRONTOS_QUARTAS = 4;
+const N_CONFRONTOS_SEMIS = 2;
+
 function rotuloTime(t) {
   if (!t) return "—";
   return t.nome;
@@ -45,10 +49,14 @@ function faseDuplaConcluida(ties, placares) {
 
 function removerPlacaresPorPrefixo(placares, prefixos) {
   const next = { ...placares };
+  let mudou = false;
   for (const k of Object.keys(next)) {
-    if (prefixos.some((p) => k.startsWith(p))) delete next[k];
+    if (prefixos.some((p) => k.startsWith(p))) {
+      delete next[k];
+      mudou = true;
+    }
   }
-  return next;
+  return mudou ? next : placares;
 }
 
 export default function CopaDoBrasilSimulator() {
@@ -61,6 +69,8 @@ export default function CopaDoBrasilSimulator() {
 
   const [koPlacares, setKoPlacares] = useState({});
   const [pixCopiado, setPixCopiado] = useState(false);
+
+  const semisFormadasPorVencedoresRef = useRef("");
 
   const handleKoChange = useCallback((id, lado, valor) => {
     const n = valor === "" ? null : Number(valor);
@@ -97,7 +107,6 @@ export default function CopaDoBrasilSimulator() {
 
   const quintaOk = faseDuplaConcluida(quintaTies, koPlacares);
   const oitavasOk = tiesOitavas && faseDuplaConcluida(tiesOitavas, koPlacares);
-  const quartasOk = tiesQuartas && faseDuplaConcluida(tiesQuartas, koPlacares);
 
   const sortearOitavas = () => {
     if (!quintaOk) return;
@@ -117,41 +126,45 @@ export default function CopaDoBrasilSimulator() {
     setKoPlacares((p) => removerPlacaresPorPrefixo(p, ["q4-", "s2-", "f-"]));
     setTiesQuartas(ties);
     setTiesSemis(null);
+    semisFormadasPorVencedoresRef.current = "";
     setEtapa("quartas");
   };
 
-  const formarSemifinais = () => {
-    if (!quartasOk || !tiesQuartas) return;
+  useEffect(() => {
+    if (!tiesQuartas) {
+      semisFormadasPorVencedoresRef.current = "";
+      setTiesSemis(null);
+      return;
+    }
+
+    if (!faseDuplaConcluida(tiesQuartas, koPlacares)) {
+      semisFormadasPorVencedoresRef.current = "";
+      setTiesSemis(null);
+      setKoPlacares((p) => removerPlacaresPorPrefixo(p, ["s2-", "f-"]));
+      setEtapa((e) => (e === "semis" ? "quartas" : e));
+      return;
+    }
+
     const w = tiesQuartas.map((t) => vencedorConfrontoDuplo(t, koPlacares));
-    if (w.some((x) => !x || x === "tie")) return;
+    if (w.some((x) => !x || x === "tie")) {
+      semisFormadasPorVencedoresRef.current = "";
+      setTiesSemis(null);
+      setKoPlacares((p) => removerPlacaresPorPrefixo(p, ["s2-", "f-"]));
+      setEtapa((e) => (e === "semis" ? "quartas" : e));
+      return;
+    }
+
+    const assinatura = w.map((x) => x.nome).join("|");
+    if (assinatura === semisFormadasPorVencedoresRef.current) return;
+
+    semisFormadasPorVencedoresRef.current = assinatura;
     setKoPlacares((p) => removerPlacaresPorPrefixo(p, ["s2-", "f-"]));
     setTiesSemis([
       confrontoDuploEntre(w[0], w[1], "s2-0"),
       confrontoDuploEntre(w[2], w[3], "s2-1"),
     ]);
     setEtapa("semis");
-  };
-
-  const novoSorteioOitavas = () => {
-    if (!quintaOk) return;
-    const vencedores = quintaTies.map((t) => vencedorConfrontoDuplo(t, koPlacares));
-    const ties = sortearConfrontosIdaVolta(vencedores, "o8");
-    setKoPlacares((p) => removerPlacaresPorPrefixo(p, ["o8-", "q4-", "s2-", "f-"]));
-    setTiesOitavas(ties);
-    setTiesQuartas(null);
-    setTiesSemis(null);
-    setEtapa("oitavas");
-  };
-
-  const novoSorteioQuartas = () => {
-    if (!oitavasOk || !tiesOitavas) return;
-    const vencedores = tiesOitavas.map((t) => vencedorConfrontoDuplo(t, koPlacares));
-    const ties = sortearConfrontosIdaVolta(vencedores, "q4");
-    setKoPlacares((p) => removerPlacaresPorPrefixo(p, ["q4-", "s2-", "f-"]));
-    setTiesQuartas(ties);
-    setTiesSemis(null);
-    setEtapa("quartas");
-  };
+  }, [tiesQuartas, koPlacares]);
 
   const finalMatch = useMemo(() => {
     if (!tiesSemis || tiesSemis.length !== 2) return null;
@@ -407,8 +420,8 @@ export default function CopaDoBrasilSimulator() {
         </Link>
         <h1 className="app-title">Simulador Copa do Brasil</h1>
         <p className="app-subtitle">
-          Começa na quinta fase com os 16 confrontos oficiais. Depois, sorteio livre nas oitavas e nas quartas; as
-          semifinais cruzam os vencedores das quartas em ordem de chave (1×2 e 3×4). Final em jogo único; empate no
+          Começa na quinta fase com os 16 confrontos oficiais. Depois, sorteio livre nas oitavas e nas quartas; ao
+          fechar as quartas, as semifinais montam sozinhas (1ª quarta × 2ª; 3ª × 4ª). Final em jogo único; empate no
           agregado ou na final vai para pênaltis.
         </p>
       </header>
@@ -422,97 +435,116 @@ export default function CopaDoBrasilSimulator() {
                 renderConfrontoDuplo(m, { disabled: etapa !== "quinta" })
               )}
             </div>
-            {etapa === "quinta" && quintaOk && (
-              <div className="knockout__actions" style={{ marginTop: "1.25rem" }}>
-                <button type="button" className="knockout__sortear" onClick={sortearOitavas}>
-                  Sortear oitavas de final
-                </button>
-              </div>
-            )}
+            <div className="knockout__actions knockout__actions--after-round">
+              <button
+                type="button"
+                className="knockout__sortear"
+                disabled={!quintaOk}
+                title={
+                  !quintaOk
+                    ? "Preencha todos os confrontos da quinta fase com placares válidos"
+                    : undefined
+                }
+                onClick={sortearOitavas}
+              >
+                Sortear oitavas de final
+              </button>
+              {tiesOitavas && (
+                <span className="knockout__hint">
+                  Sortear de novo zera placares das oitavas e das fases seguintes.
+                </span>
+              )}
+            </div>
           </section>
 
-          {tiesOitavas && (
-            <section className="bracket__round">
-              <h2 className="bracket__title">Oitavas de final (sorteio)</h2>
-              <div className="bracket__matches bracket__matches--ties">
-                {tiesOitavas.map((m) =>
-                  renderConfrontoDuplo(m, {
-                    disabled: etapa !== "oitavas",
-                  })
-                )}
-              </div>
-              <div className="knockout__actions">
-                {etapa === "oitavas" && oitavasOk && (
-                  <button type="button" className="knockout__sortear" onClick={sortearQuartas}>
-                    Sortear quartas de final
-                  </button>
-                )}
-                {etapa !== "quinta" && (
-                  <>
-                    <button type="button" className="knockout__resortear" onClick={novoSorteioOitavas}>
-                      Novo sorteio (oitavas)
-                    </button>
-                    <span className="knockout__hint">
-                      Zera placares da fase e posteriores e sorteia de novo as oitavas.
-                    </span>
-                  </>
-                )}
-              </div>
-            </section>
-          )}
+          <section className="bracket__round">
+            <h2 className="bracket__title">Oitavas de final (sorteio)</h2>
+            <div className="bracket__matches bracket__matches--ties">
+              {tiesOitavas
+                ? tiesOitavas.map((m) =>
+                    renderConfrontoDuplo(m, {
+                      disabled: etapa !== "oitavas",
+                    })
+                  )
+                : Array.from({ length: N_CONFRONTOS_OITAVAS }, (_, i) => (
+                    <div key={`o8-ph-${i}`} className="ko-tie ko-tie--placeholder">
+                      <p className="ko-tie__wait">Aguardando sorteio</p>
+                    </div>
+                  ))}
+            </div>
+            <div className="knockout__actions knockout__actions--after-round">
+              <button
+                type="button"
+                className="knockout__sortear"
+                disabled={!oitavasOk || !tiesOitavas}
+                title={
+                  !tiesOitavas
+                    ? "Sorteie primeiro as oitavas de final"
+                    : !oitavasOk
+                      ? "Preencha todos os confrontos das oitavas com placares válidos"
+                      : undefined
+                }
+                onClick={sortearQuartas}
+              >
+                Sortear quartas de final
+              </button>
+              {tiesQuartas && (
+                <span className="knockout__hint">
+                  Sortear de novo zera placares das quartas e das fases seguintes; mantém oitavas.
+                </span>
+              )}
+            </div>
+          </section>
 
-          {tiesQuartas && (
-            <section className="bracket__round">
-              <h2 className="bracket__title">Quartas de final (sorteio)</h2>
-              <div className="bracket__matches bracket__matches--ties">
-                {tiesQuartas.map((m) =>
-                  renderConfrontoDuplo(m, {
-                    disabled: etapa !== "quartas",
-                  })
-                )}
-              </div>
-              <div className="knockout__actions">
-                {etapa === "quartas" && quartasOk && (
-                  <button type="button" className="knockout__sortear" onClick={formarSemifinais}>
-                    Montar semifinais (chaveamento)
-                  </button>
-                )}
-                {(etapa === "quartas" || etapa === "semis" || finalMatch) && (
-                  <>
-                    <button type="button" className="knockout__resortear" onClick={novoSorteioQuartas}>
-                      Novo sorteio (quartas)
-                    </button>
-                    <span className="knockout__hint">
-                      Zera quartas, semis e final; mantém oitavas.
-                    </span>
-                  </>
-                )}
-              </div>
-            </section>
-          )}
+          <section className="bracket__round">
+            <h2 className="bracket__title">Quartas de final (sorteio)</h2>
+            <div className="bracket__matches bracket__matches--ties">
+              {tiesQuartas
+                ? tiesQuartas.map((m) =>
+                    renderConfrontoDuplo(m, {
+                      disabled: etapa !== "quartas",
+                    })
+                  )
+                : Array.from({ length: N_CONFRONTOS_QUARTAS }, (_, i) => (
+                    <div key={`q4-ph-${i}`} className="ko-tie ko-tie--placeholder">
+                      <p className="ko-tie__wait">Aguardando sorteio</p>
+                    </div>
+                  ))}
+            </div>
+          </section>
 
-          {tiesSemis && (
-            <section className="bracket__round">
-              <h2 className="bracket__title">Semifinais</h2>
-              <p className="knockout__intro-text" style={{ marginBottom: "1rem" }}>
-                Vencedor da 1ª quarta contra o da 2ª; vencedor da 3ª contra o da 4ª. Mando da volta sorteado.
-              </p>
-              <div className="bracket__matches bracket__matches--ties">
-                {tiesSemis.map((m) =>
-                  renderConfrontoDuplo(m, {
-                    disabled: etapa !== "semis",
-                  })
-                )}
-              </div>
-            </section>
-          )}
+          <section className="bracket__round">
+            <h2 className="bracket__title">Semifinais</h2>
+            <p className="knockout__intro-text" style={{ marginBottom: "1rem" }}>
+              Vencedor da 1ª quarta contra o da 2ª; vencedor da 3ª contra o da 4ª. Mando da volta sorteado.
+            </p>
+            <div className="bracket__matches bracket__matches--ties">
+              {tiesSemis
+                ? tiesSemis.map((m) =>
+                    renderConfrontoDuplo(m, {
+                      disabled: etapa !== "semis",
+                    })
+                  )
+                : Array.from({ length: N_CONFRONTOS_SEMIS }, (_, i) => (
+                    <div key={`s2-ph-${i}`} className="ko-tie ko-tie--placeholder">
+                      <p className="ko-tie__wait">Preencha as quartas para definir as semifinais</p>
+                    </div>
+                  ))}
+            </div>
+          </section>
 
-          {finalMatch && (
-            <section className="bracket__round bracket__round--final">
-              <h2 className="bracket__title">Final</h2>
-              <div className="bracket__matches">{renderFinal(finalMatch)}</div>
-            </section>
-          )}
+          <section className="bracket__round bracket__round--final">
+            <h2 className="bracket__title">Final</h2>
+            <div className="bracket__matches">
+              {finalMatch ? (
+                renderFinal(finalMatch)
+              ) : (
+                <div className="ko-tie ko-tie--placeholder">
+                  <p className="ko-tie__wait">Aguardando final</p>
+                </div>
+              )}
+            </div>
+          </section>
 
           {campeao && campeao !== "tie" && (
             <div className="knockout__champion">
