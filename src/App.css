@@ -791,6 +791,19 @@
   box-shadow: 0 6px 28px color-mix(in srgb, var(--gold) 35%, transparent);
 }
 
+.knockout__sortear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  filter: grayscale(0.45);
+}
+
+.knockout__sortear:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .knockout__actions {
   display: flex;
   flex-wrap: wrap;
@@ -798,6 +811,11 @@
   gap: 0.65rem 1rem;
   margin-bottom: 1.5rem;
   justify-content: center;
+}
+
+.knockout__actions--after-round {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
 }
 
 .knockout__resortear {
@@ -1250,6 +1268,20 @@
   box-shadow:
     0 6px 28px color-mix(in srgb, #1fa85b 45%, transparent),
     0 0 26px color-mix(in srgb, #f2c94c 22%, transparent);
+}
+
+.theme-copa-brasil .knockout__sortear:disabled {
+  opacity: 0.32;
+  color: color-mix(in srgb, var(--sortear-fg) 55%, transparent);
+  background: color-mix(in srgb, #f2c94c 22%, #0f7a3d);
+  border-color: color-mix(in srgb, #ffffff 10%, transparent);
+  filter: grayscale(0.55) brightness(0.92);
+}
+
+.theme-copa-brasil .knockout__sortear:disabled:hover {
+  background: color-mix(in srgb, #f2c94c 22%, #0f7a3d);
+  color: color-mix(in srgb, var(--sortear-fg) 55%, transparent);
+  border-color: color-mix(in srgb, #ffffff 10%, transparent);
 }
 
 .theme-copa-brasil .bracket__round {
