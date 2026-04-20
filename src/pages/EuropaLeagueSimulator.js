@@ -332,7 +332,7 @@ export default function EuropaLeagueSimulator() {
         </Link>
         <h1 className="app-title">Simulador Europa League</h1>
         <p className="app-subtitle">
-          Semifinais com ida e volta (decidindo em casa o time da direita) e final em jogo único.
+          Semifinais com ida e volta e final em jogo único.
         </p>
       </header>
 
