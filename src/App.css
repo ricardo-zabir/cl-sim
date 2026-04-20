@@ -1354,6 +1354,96 @@
   box-shadow: 0 6px 18px rgba(47, 91, 255, 0.35);
 }
 
+/* Europa League — paleta laranja/preto */
+.theme-europa-league {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.52);
+  --uel-btn: #ff5a00;
+  --uel-btn-hover: #ff7a1a;
+  --uel-btn-active: #cc4700;
+  --uel-glow: #ff6a00;
+  --bg-deep: #0b0b0b;
+  --bg-card: #121212;
+  --bg-card-hover: #1e1e1e;
+  --gold: #ff5a00;
+  --gold-dim: #cc4700;
+  --gold-hover-bright: #ff7a1a;
+  --border: rgba(255, 90, 0, 0.35);
+  --text: #ffffff;
+  --text-muted: #cfcfcf;
+  --accent-green: #ff5a00;
+  --input-bg: #0b0b0b;
+  --sortear-fg: #ffffff;
+  --bg-glow-a: color-mix(in srgb, #ff6a00 22%, transparent);
+  --bg-glow-b: color-mix(in srgb, #ff9a3c 14%, transparent);
+  --gradient-base-start: #0b0b0b;
+  --gradient-base-end: #121212;
+  --support-donation-end: color-mix(in srgb, #1e1e1e 70%, #0b0b0b);
+  --pill-bg: rgba(255, 90, 0, 0.16);
+  --support-footer-bg: rgba(18, 18, 18, 0.94);
+  --support-footer-text: #cfcfcf;
+  --support-footer-btn-text: #ffffff;
+  --support-footer-btn-bg: #ff5a00;
+  --support-footer-btn-border: rgba(255, 154, 60, 0.45);
+  --support-block-border: rgba(255, 90, 0, 0.35);
+  --support-block-feedback-bg: rgba(11, 11, 11, 0.6);
+  --champion-bg-end: rgba(255, 90, 0, 0.24);
+  --support-footer-btn-hover-bg: #ff7a1a;
+  --support-footer-btn-hover-border: rgba(255, 255, 255, 0.3);
+  --input-border: rgba(255, 90, 0, 0.5);
+  --card-hover-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+
+.theme-europa-league .app-title {
+  background: linear-gradient(135deg, #ffffff 0%, #ffb27a 55%, #ff5a00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-europa-league .app-subtitle {
+  color: #cfcfcf;
+}
+
+.theme-europa-league .app-back-home:hover {
+  color: #ffffff;
+  border-color: rgba(255, 122, 26, 0.7);
+  background: rgba(255, 90, 0, 0.42);
+  box-shadow: 0 0 22px rgba(255, 106, 0, 0.3);
+}
+
+.theme-europa-league .bracket__round {
+  border-color: rgba(255, 90, 0, 0.5);
+  box-shadow: var(--shadow), 0 0 0 1px rgba(255, 90, 0, 0.22);
+}
+
+.theme-europa-league .bracket__round--final {
+  border-color: rgba(255, 122, 26, 0.72);
+  box-shadow:
+    var(--shadow),
+    0 0 0 1px rgba(255, 122, 26, 0.3),
+    0 0 30px rgba(255, 106, 0, 0.12);
+}
+
+.theme-europa-league .ko-tie:not(.ko-tie--placeholder):hover,
+.theme-europa-league .ko-match:not(.ko-match--disabled):hover {
+  box-shadow: 0 0 0 1px rgba(255, 122, 26, 0.35);
+}
+
+.theme-europa-league .score-input:focus {
+  border-color: #ff7a1a;
+  box-shadow: 0 0 0 2px rgba(255, 90, 0, 0.28);
+}
+
+.theme-europa-league .support-footer__btn:hover {
+  background: var(--uel-btn-hover);
+  border-color: rgba(255, 255, 255, 0.36);
+  box-shadow: 0 6px 18px rgba(255, 106, 0, 0.35);
+}
+
+.theme-europa-league .support-footer__btn:active {
+  background: var(--uel-btn-active);
+}
+
 /* Copa do Mundo 2026 */
 .theme-world-cup-2026 {
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);

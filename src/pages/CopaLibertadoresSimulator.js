@@ -326,6 +326,13 @@ export default function CopaLibertadoresSimulator(){
     const ag = agregadoConfronto(tie, koPlacares);
     const pen = placarKo(koPlacares, penId);
     const mostrarPen = ag.completo && ag.empatado;
+    const primeiroPenEhSideA = tie.volta.mandante.nome === tie.sideA.nome;
+    const timePenPrimeiro = primeiroPenEhSideA ? tie.sideA : tie.sideB;
+    const timePenSegundo = primeiroPenEhSideA ? tie.sideB : tie.sideA;
+    const valorAgPrimeiro = primeiroPenEhSideA ? ag.agA : ag.agB;
+    const valorAgSegundo = primeiroPenEhSideA ? ag.agB : ag.agA;
+    const valorPenPrimeiro = primeiroPenEhSideA ? pen.a : pen.b;
+    const valorPenSegundo = primeiroPenEhSideA ? pen.b : pen.a;
     const penTie =
       mostrarPen && pen.a != null && pen.b != null && pen.a === pen.b;
 
@@ -384,16 +391,16 @@ export default function CopaLibertadoresSimulator(){
         {rowLeg("Volta", volId, tie.volta.mandante, tie.volta.visitante)}
         {ag.completo && (
           <div className="ko-tie__agg">
-            Agregado: <strong>{tie.sideA.nome}</strong> {ag.agA} × {ag.agB}{" "}
-            <strong>{tie.sideB.nome}</strong>
+            Agregado: <strong>{timePenPrimeiro.nome}</strong> {valorAgPrimeiro} ×{" "}
+            {valorAgSegundo} <strong>{timePenSegundo.nome}</strong>
           </div>
         )}
         {mostrarPen && (
           <div className="ko-tie__pen">
             <span className="ko-tie__pen-label">Pênaltis</span>
             <div className="ko-tie__pen-row">
-              <span className="ko-tie__pen-side" title={tie.sideA.nome}>
-                {tie.sideA.nome}
+              <span className="ko-tie__pen-side" title={timePenPrimeiro.nome}>
+                {timePenPrimeiro.nome}
               </span>
               <div className="ko-tie__pen-score">
                 <input
@@ -403,8 +410,14 @@ export default function CopaLibertadoresSimulator(){
                   disabled={disabled}
                   className="score-input score-input--pen"
                   placeholder="–"
-                  value={pen.a ?? ""}
-                  onChange={(e) => handleKoChange(penId, "a", e.target.value)}
+                  value={valorPenPrimeiro ?? ""}
+                  onChange={(e) =>
+                    handleKoChange(
+                      penId,
+                      primeiroPenEhSideA ? "a" : "b",
+                      e.target.value
+                    )
+                  }
                 />
                 <span className="score-sep">×</span>
                 <input
@@ -414,12 +427,18 @@ export default function CopaLibertadoresSimulator(){
                   disabled={disabled}
                   className="score-input score-input--pen"
                   placeholder="–"
-                  value={pen.b ?? ""}
-                  onChange={(e) => handleKoChange(penId, "b", e.target.value)}
+                  value={valorPenSegundo ?? ""}
+                  onChange={(e) =>
+                    handleKoChange(
+                      penId,
+                      primeiroPenEhSideA ? "b" : "a",
+                      e.target.value
+                    )
+                  }
                 />
               </div>
-              <span className="ko-tie__pen-side" title={tie.sideB.nome}>
-                {tie.sideB.nome}
+              <span className="ko-tie__pen-side" title={timePenSegundo.nome}>
+                {timePenSegundo.nome}
               </span>
             </div>
           </div>

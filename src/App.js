@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import CopaLibertadoresSimulator from "./pages/CopaLibertadoresSimulator";
 import CopaDoBrasilSimulator from "./pages/CopaDoBrasilSimulator";
 import ChampionsLeagueSimulator from "./pages/ChampionsLeagueSimulator";
+import EuropaLeagueSimulator from "./pages/EuropaLeagueSimulator";
 import WorldCup2026Simulator from "./pages/WorldCup2026Simulator";
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/copa-libertadores" element={<CopaLibertadoresSimulator />} />
         <Route path="/copa-do-brasil" element={<CopaDoBrasilSimulator />} />
         <Route path="/champions-league" element={<ChampionsLeagueSimulator />} />
+        <Route path="/europa-league" element={<EuropaLeagueSimulator />} />
         <Route path="/copa-do-mundo-2026" element={<WorldCup2026Simulator />} />
       </Routes>
       <Analytics />
