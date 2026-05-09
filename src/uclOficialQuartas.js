@@ -11,6 +11,10 @@ export const PLACARES_QUARTAS_UCL_INICIAL = {
   "ucl-qf-2-volta": { casa: 1, fora: 2 },
   "ucl-qf-3-ida": { casa: 0, fora: 1 },
   "ucl-qf-3-volta": { casa: 0, fora: 0 },
+  "ucl-sf-0-ida": { casa: 5, fora: 4 },
+  "ucl-sf-0-volta": { casa: 1, fora: 1 },
+  "ucl-sf-1-ida": { casa: 1, fora: 1 },
+  "ucl-sf-1-volta": { casa: 1, fora: 0 },
 };
 
 export function placarQuartasUclEhOficial(id) {

@@ -179,7 +179,7 @@ export default function CopaLibertadoresSimulator(){
   const [rodadaPorGrupo, setRodadaPorGrupo] = useState(() => {
     const inicial = {};
     for (const g of Object.keys(grupos)) {
-      inicial[g] = 2;
+      inicial[g] = 4;
     }
     return inicial;
   });

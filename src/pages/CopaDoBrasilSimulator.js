@@ -67,7 +67,24 @@ export default function CopaDoBrasilSimulator() {
   const [tiesQuartas, setTiesQuartas] = useState(null);
   const [tiesSemis, setTiesSemis] = useState(null);
 
-  const [koPlacares, setKoPlacares] = useState({});
+  const [koPlacares, setKoPlacares] = useState({
+    "q5-0-ida": { casa: 2, fora: 1 },
+    "q5-1-ida": { casa: 2, fora: 2 },
+    "q5-2-ida": { casa: 0, fora: 0 },
+    "q5-3-ida": { casa: 2, fora: 1 },
+    "q5-4-ida": { casa: 2, fora: 0 },
+    "q5-5-ida": { casa: 0, fora: 2 },
+    "q5-6-ida": { casa: 2, fora: 1 },
+    "q5-7-ida": { casa: 1, fora: 3 },
+    "q5-8-ida": { casa: 1, fora: 0 },
+    "q5-9-ida": { casa: 1, fora: 1 },
+    "q5-10-ida": { casa: 0, fora: 1 },
+    "q5-11-ida": { casa: 0, fora: 0 },
+    "q5-12-ida": { casa: 3, fora: 0 },
+    "q5-13-ida": { casa: 1, fora: 2 },
+    "q5-14-ida": { casa: 0, fora: 0 },
+    "q5-15-ida": { casa: 1, fora: 0 },
+  });
   const [pixCopiado, setPixCopiado] = useState(false);
 
   const semisFormadasPorVencedoresRef = useRef("");

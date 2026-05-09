@@ -32,7 +32,12 @@ function rotuloTime(t) {
 
 export default function EuropaLeagueSimulator() {
   const semifinaisTies = useMemo(() => montarSemifinaisEuropaLeague(), []);
-  const [koPlacares, setKoPlacares] = useState({});
+  const [koPlacares, setKoPlacares] = useState({
+    "uel-sf-0-ida": { casa: 2, fora: 1 },
+    "uel-sf-0-volta": { casa: 3, fora: 1 },
+    "uel-sf-1-ida": { casa: 1, fora: 0 },
+    "uel-sf-1-volta": { casa: 4, fora: 0 },
+  });
   const [pixCopiado, setPixCopiado] = useState(false);
 
   const bracket = useMemo(
