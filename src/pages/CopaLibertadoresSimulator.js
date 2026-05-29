@@ -115,9 +115,63 @@ function calcularTabela(jogos, grupo, placares) {
     }
   });
 
-  return Object.entries(tabela).map(([time,dados])=>(
-    {...dados, time, SG: dados.GP - dados.GC}
-  )).sort((a,b)=> b.P - a.P || b.SG - a.SG || b.GP - a.GP);
+  const linhas = Object.entries(tabela).map(([time, dados]) => ({
+    ...dados,
+    time,
+    SG: dados.GP - dados.GC,
+  }));
+
+  return linhas.sort((a, b) =>
+    compararPosicaoGrupo(a, b, jogos, grupo, placares)
+  );
+}
+
+/** Pontos e desempates no confronto direto entre dois times (regra CONMEBOL). */
+function confrontoDireto(timeA, timeB, jogos, grupo, placares) {
+  let pA = 0;
+  let pB = 0;
+  let gpA = 0;
+  let gcA = 0;
+  let gpB = 0;
+  let gcB = 0;
+
+  jogos.forEach((j, i) => {
+    const envolveA = j.casa === timeA || j.fora === timeA;
+    const envolveB = j.casa === timeB || j.fora === timeB;
+    if (!envolveA || !envolveB) return;
+
+    const placar = placares[`${grupo}-${i}`] || {};
+    const gCasa = placar.casa ?? null;
+    const gFora = placar.fora ?? null;
+    if (gCasa === null || gFora === null) return;
+
+    const golsA = j.casa === timeA ? gCasa : gFora;
+    const golsB = j.casa === timeB ? gCasa : gFora;
+    gpA += golsA;
+    gcA += golsB;
+    gpB += golsB;
+    gcB += golsA;
+
+    if (golsA > golsB) pA += 3;
+    else if (golsA < golsB) pB += 3;
+    else {
+      pA += 1;
+      pB += 1;
+    }
+  });
+
+  return { pA, pB, sgA: gpA - gcA, sgB: gpB - gcB, gpA, gpB };
+}
+
+function compararPosicaoGrupo(a, b, jogos, grupo, placares) {
+  if (b.P !== a.P) return b.P - a.P;
+
+  const h2h = confrontoDireto(a.time, b.time, jogos, grupo, placares);
+  if (h2h.pB !== h2h.pA) return h2h.pB - h2h.pA;
+  if (h2h.sgB !== h2h.sgA) return h2h.sgB - h2h.sgA;
+  if (h2h.gpB !== h2h.gpA) return h2h.gpB - h2h.gpA;
+
+  return b.SG - a.SG || b.GP - a.GP;
 }
 
 function gruposEstaoCompletos(placares) {
@@ -179,11 +233,11 @@ export default function CopaLibertadoresSimulator(){
   const [rodadaPorGrupo, setRodadaPorGrupo] = useState(() => {
     const inicial = {};
     for (const g of Object.keys(grupos)) {
-      inicial[g] = 4;
+      inicial[g] = 5;
     }
     return inicial;
   });
-  const [fase, setFase] = useState("grupos");
+  const [fase, setFase] = useState("mataMata");
   const [sorteio, setSorteio] = useState(null);
   const [koPlacares, setKoPlacares] = useState({});
   const [pixCopiado, setPixCopiado] = useState(false);
