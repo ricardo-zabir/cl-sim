@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import { escudosPorNome } from "../escudos";
 import {
-  sortearOitavas,
   montarChaveamento,
   vencedorFinal,
   agregadoConfronto,
@@ -13,6 +12,7 @@ import {
   PLACARES_OFICIAIS_GRUPOS,
   placarGrupoEhOficial,
 } from "../libertaOficialGrupos";
+import { montarSorteioOficialOitavas } from "../libertaOficialOitavas";
 
 function Escudo({ nome }) {
   const src = escudosPorNome[nome];
@@ -238,7 +238,6 @@ export default function CopaLibertadoresSimulator(){
     return inicial;
   });
   const [fase, setFase] = useState("mataMata");
-  const [sorteio, setSorteio] = useState(null);
   const [koPlacares, setKoPlacares] = useState({});
   const [pixCopiado, setPixCopiado] = useState(false);
 
@@ -261,9 +260,13 @@ export default function CopaLibertadoresSimulator(){
   );
 
   useEffect(() => {
-    setSorteio(null);
     setKoPlacares({});
   }, [chaveKey]);
+
+  const sorteio = useMemo(
+    () => montarSorteioOficialOitavas(classificados),
+    [classificados]
+  );
 
   const handleChange = (key, lado, valor) => {
     if (placarGrupoEhOficial(key)) return;
@@ -340,17 +343,6 @@ export default function CopaLibertadoresSimulator(){
       window.alert("Não foi possível copiar a chave Pix.");
     }
   }, []);
-
-  const realizarSorteio = () => {
-    if (!gruposCompletos || classificados.length !== 16) return;
-    setKoPlacares({});
-    const s = sortearOitavas(classificados);
-    if (!s) {
-      window.alert("Não foi possível montar o sorteio. Tente «Novo sorteio».");
-      return;
-    }
-    setSorteio(s);
-  };
 
   const bracket = useMemo(
     () => montarChaveamento(sorteio, koPlacares),
@@ -641,7 +633,7 @@ export default function CopaLibertadoresSimulator(){
         <p className="app-subtitle">
           {fase === "grupos"
             ? "Preencha todos os resultados da fase de grupos para liberar a fase mata-mata. Os dois melhores de cada grupo avançam. O botão “Simular grupo” preenche automaticamente os resultados restantes."
-            : "Clique em “Sortear” para gerar o chaveamento. Os primeiros colocados decidem em casa nas oitavas. A melhor campanha na fase de grupos decide em casa nas quartas e na semifinal. Empates no placar agregado ou na final são decididos nos pênaltis."}
+            : "Oitavas com chaveamento oficial: ida na casa do time à esquerda de cada confronto. Quartas e semifinais: mando na volta para a melhor campanha na fase de grupos. Empate no agregado ou na final vai para pênaltis."}
         </p>
       </header>
 
@@ -806,23 +798,13 @@ export default function CopaLibertadoresSimulator(){
           {!sorteio && (
             <div className="knockout__intro">
               <p className="knockout__intro-text">
-                Sorteio dos 1ºs de grupo contra 2ºs de grupos (dois potes). Ida com mandante do 2º; volta com mandante do 1º. Empate no agregado decide nos pênaltis.
+                Não foi possível montar o chaveamento oficial das oitavas com a classificação atual.
               </p>
-              <button type="button" className="knockout__sortear" onClick={realizarSorteio}>
-                Sortear oitavas de final
-              </button>
             </div>
           )}
 
           {sorteio && (
             <>
-              <div className="knockout__actions">
-                <button type="button" className="knockout__resortear" onClick={realizarSorteio}>
-                  Novo sorteio
-                </button>
-                <span className="knockout__hint">Isso zera os placares do mata-mata.</span>
-              </div>
-
               <div className="bracket">
                 <section className="bracket__round">
                   <h2 className="bracket__title">Oitavas de final</h2>

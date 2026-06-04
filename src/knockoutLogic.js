@@ -145,8 +145,8 @@ export function confrontoDuploEntre(wa, wb, id) {
 
 /** Ida na casa do time da esquerda (`sideA`); volta na casa do `sideB`. */
 export function confrontoDuploMandoEsquerda(wa, wb, id) {
-  const A = { ...stripPos(wa), grpPts: 0, grpSG: 0, grpGP: 0, grpGC: 0 };
-  const B = { ...stripPos(wb), grpPts: 0, grpSG: 0, grpGP: 0, grpGC: 0 };
+  const A = stripPos(wa);
+  const B = stripPos(wb);
   return {
     id,
     tipo: "duas",
