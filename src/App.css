@@ -74,6 +74,356 @@
   --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
 }
 
+/* Sul-Americana — limão / azul-preto */
+.theme-sul-americana {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --bg-deep: #101418;
+  --bg-card: #1b2127;
+  --bg-card-hover: #232a31;
+  --gold: #d9f000;
+  --gold-dim: #a8c900;
+  --gold-hover-bright: #e8ff3a;
+  --border: color-mix(in srgb, #343c43 85%, transparent);
+  --text: #f5f7f8;
+  --text-muted: #aeb7bf;
+  --accent-green: #a8c900;
+  --input-bg: #14191e;
+  --sortear-fg: #101418;
+  --bg-glow-a: color-mix(in srgb, #d9f000 12%, transparent);
+  --bg-glow-b: color-mix(in srgb, #a8c900 10%, transparent);
+  --gradient-base-start: #101418;
+  --gradient-base-end: #0c0f12;
+  --support-donation-end: rgba(27, 33, 39, 0.65);
+  --pill-bg: rgba(27, 33, 39, 0.7);
+  --support-footer-bg: rgba(27, 33, 39, 0.85);
+  --support-footer-text: #aeb7bf;
+  --support-footer-btn-text: #f5f7f8;
+  --support-footer-btn-bg: rgba(255, 255, 255, 0.06);
+  --support-footer-btn-border: color-mix(in srgb, #343c43 90%, transparent);
+  --support-block-border: color-mix(in srgb, #343c43 80%, transparent);
+  --support-block-feedback-bg: rgba(27, 33, 39, 0.55);
+  --champion-bg-end: color-mix(in srgb, #d9f000 14%, #1b2127);
+  --support-footer-btn-hover-bg: color-mix(in srgb, #d9f000 18%, transparent);
+  --support-footer-btn-hover-border: color-mix(in srgb, #d9f000 55%, transparent);
+  --input-border: color-mix(in srgb, #343c43 90%, transparent);
+  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+/* ——— Chaveamento visual (Sul-Americana / Libertadores) ——— */
+.knockout:has(.chave-wrap) {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+}
+
+.chave-wrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.75rem;
+  margin: 0.25rem 0 1.25rem;
+}
+
+.chave {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: clamp(1.1rem, 2.2vw, 2.75rem);
+  width: 100%;
+  min-width: 0;
+  min-height: 720px;
+  padding: 0.35rem 0.15rem 1rem;
+  box-sizing: border-box;
+}
+
+.chave__col {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+.chave__col--qf,
+.chave__col--sf {
+  padding-left: 0;
+  width: auto;
+}
+
+.chave__col--final {
+  margin-left: clamp(0.35rem, 1.5vw, 1.25rem);
+  padding-left: 0;
+  width: auto;
+  flex: 0.95 1 0;
+}
+
+.chave__title {
+  margin: 0 0 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+}
+
+.chave__col-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 0.75rem;
+}
+
+.chave__col-body--final {
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.chave__pair {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1;
+  gap: 0.85rem;
+  padding: 0.5rem clamp(1.1rem, 2.2vw, 2.75rem) 0.5rem 0;
+  z-index: 0;
+}
+
+/* linha vertical unindo o par + hastes horizontais para a próxima fase */
+.chave__pair::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: calc(25% - 1px);
+  bottom: calc(25% - 1px);
+  width: 2px;
+  background: color-mix(in srgb, var(--gold-dim) 70%, var(--border));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chave__pair::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * clamp(1.1rem, 2.2vw, 2.75rem));
+  top: 50%;
+  width: clamp(1.1rem, 2.2vw, 2.75rem);
+  height: 2px;
+  background: color-mix(in srgb, var(--gold-dim) 70%, var(--border));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chave__col--sf .chave__pair::after {
+  right: calc(-1 * (clamp(0.35rem, 1.5vw, 1.25rem) + clamp(1.1rem, 2.2vw, 2.75rem)));
+  width: calc(clamp(0.35rem, 1.5vw, 1.25rem) + clamp(1.1rem, 2.2vw, 2.75rem));
+}
+
+.chave__pair--final::before,
+.chave__pair--final::after {
+  display: none;
+}
+
+.chave__pair--final {
+  padding-right: 0;
+  flex: 0 0 auto;
+}
+
+.chave-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.chave-slot--disabled {
+  opacity: 0.55;
+}
+
+.chave-slot--empty {
+  min-height: 72px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  border-style: dashed;
+}
+
+.chave-slot__wait {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.chave-slot--final {
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--border));
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--gold) 25%, transparent);
+}
+
+.chave-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.45rem;
+  background: color-mix(in srgb, var(--bg-deep) 35%, var(--bg-card));
+}
+
+.chave-row + .chave-row {
+  border-top: 1px solid var(--border);
+}
+
+.chave-row--winner {
+  background: color-mix(in srgb, var(--gold) 14%, var(--bg-card));
+}
+
+.chave-row--winner .chave-row__name {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.chave-escudo {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.chave-row__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.chave-row__scores {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 3px;
+  pointer-events: auto;
+}
+
+.chave-row__scores--pen .chave-score--pen {
+  margin-left: 4px;
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--border));
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--gold) 55%, transparent);
+}
+
+.chave-score {
+  position: relative;
+  z-index: 3;
+  width: 1.85rem;
+  height: 1.7rem;
+  padding: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  pointer-events: auto;
+  cursor: text;
+}
+
+.chave-score::-webkit-outer-spin-button,
+.chave-score::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.chave-score:focus {
+  outline: 2px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  outline-offset: 1px;
+}
+
+.chave-score:disabled,
+.chave-score[readonly] {
+  opacity: 0.95;
+  cursor: default;
+  color: var(--gold);
+  border-color: color-mix(in srgb, var(--gold) 35%, var(--border));
+  background: color-mix(in srgb, var(--gold) 8%, var(--input-bg));
+}
+
+.chave-score--pen {
+  width: 1.7rem;
+  color: var(--gold);
+}
+
+.chave-campeao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--border));
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--gold) 16%, var(--bg-card)) 0%,
+    var(--bg-card) 100%
+  );
+}
+
+.chave-campeao__label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.chave-campeao__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.chave-campeao__name .chave-escudo {
+  width: 26px;
+  height: 26px;
+}
+
+@media (max-width: 900px) {
+  .chave {
+    min-width: 980px;
+    min-height: 640px;
+  }
+
+  .chave__col,
+  .chave__col--qf,
+  .chave__col--sf,
+  .chave__col--final {
+    flex: 0 0 220px;
+    width: 220px;
+  }
+
+  .chave-row__name {
+    font-size: 0.76rem;
+  }
+}
+
 /* Copa do Brasil — #0F7A3D · texto branco · hover #1FA85B · brilho #F2C94C */
 .theme-copa-brasil {
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
@@ -308,20 +658,6 @@
   margin-bottom: 1.5rem;
 }
 
-.home-header__meta {
-  display: inline-block;
-  margin-top: 0.75rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--home-accent);
-  background: color-mix(in srgb, var(--home-accent) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--home-accent) 40%, transparent);
-  border-radius: 999px;
-  padding: 0.4rem 0.75rem;
-}
-
 .home-page.app-root {
   color: var(--home-text);
   background:
@@ -332,29 +668,12 @@
 
 .home-competitions {
   list-style: none;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-@media (min-width: 640px) {
-  .home-competitions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .home-competitions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1320px) {
-  .home-competitions {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: min(560px, 100%);
 }
 
 @media (max-width: 640px) {
@@ -383,33 +702,26 @@
     margin: 0 auto;
   }
 
-  .home-header__meta {
-    margin-top: 0.55rem;
-    font-size: 0.62rem;
-    padding: 0.3rem 0.58rem;
-  }
-
   .home-competitions {
-    gap: 0.7rem;
+    gap: 0.55rem;
   }
 
   .home-page .home-competition-card {
-    min-height: 0;
-    padding: 0.82rem;
-    gap: 0.62rem;
+    padding: 0.72rem 0.8rem;
+    gap: 0.7rem;
     border-radius: 10px;
   }
 
   .home-page .home-competition-card__logo {
-    width: 56px;
-    height: 56px;
-    padding: 0.33rem;
+    width: 44px;
+    height: 44px;
+    padding: 0.28rem;
     border-radius: 10px;
   }
 
   .home-competition-card__title {
     font-size: 0.94rem;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.15rem;
   }
 
   .home-competition-card__meta {
@@ -418,7 +730,7 @@
   }
 
   .home-competition-card__chev {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
 
   .home-page .support-footer {
@@ -452,34 +764,29 @@
 
 .home-competition-card {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.7rem;
-  min-height: 220px;
-  padding: 1rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
   text-decoration: none;
   color: inherit;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.15s ease;
 }
 
 .home-competition-card:hover {
   border-color: color-mix(in srgb, var(--gold) 45%, transparent);
   box-shadow: var(--card-hover-shadow);
-  transform: translateY(-2px);
 }
 
 .home-page .home-competition-card {
-  padding: 1rem;
-  gap: 0.8rem;
   background: linear-gradient(180deg, var(--home-bg-secondary) 0%, var(--home-surface) 100%);
   border-color: color-mix(in srgb, var(--home-primary) 28%, transparent);
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.35),
     0 0 0 1px color-mix(in srgb, var(--home-primary-dark) 45%, transparent);
 }
 
@@ -492,18 +799,18 @@
 }
 
 .home-competition-card__logo {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .home-page .home-competition-card__logo {
-  width: 68px;
-  height: 68px;
-  padding: 0.4rem;
+  width: 52px;
+  height: 52px;
+  padding: 0.35rem;
   object-fit: contain;
-  border-radius: 14px;
+  border-radius: 12px;
   background: linear-gradient(160deg, #f7fbff 0%, #dbe9ff 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.92),
@@ -511,33 +818,54 @@
     0 0 0 1px rgba(47, 129, 247, 0.12);
 }
 
+.home-competition-card__logo--placeholder {
+  display: block;
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--home-text-muted) 18%, transparent);
+  box-shadow: none;
+}
+
+.home-page .home-competition-card--soon {
+  cursor: default;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.home-page .home-competition-card--soon:hover {
+  border-color: color-mix(in srgb, var(--home-primary) 28%, transparent);
+  background: linear-gradient(180deg, var(--home-bg-secondary) 0%, var(--home-surface) 100%);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--home-primary-dark) 45%, transparent);
+}
+
 .home-competition-card__body {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   min-width: 0;
   text-align: left;
 }
 
 .home-competition-card__title {
-  margin: 0 0 0.25rem;
-  font-size: 1.05rem;
+  margin: 0 0 0.2rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: var(--home-text);
 }
 
 .home-competition-card__meta {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--home-text-muted);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .home-competition-card__chev {
-  margin-top: auto;
-  align-self: flex-end;
+  flex-shrink: 0;
   font-size: 1.35rem;
   font-weight: 600;
   color: var(--gold);
   opacity: 0.85;
+  line-height: 1;
 }
 
 .home-page .home-competition-card__chev {

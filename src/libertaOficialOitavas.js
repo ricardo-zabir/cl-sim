@@ -8,7 +8,7 @@ export const OITAVAS_OFICIAIS_2026 = [
   ["Deportes Tolima", "Independiente del Valle"],
   ["Mirassol", "LDU"],
   ["Palmeiras", "Cerro Porteño"],
-  ["Fluminense", "Independiente Rivadavia"],
+  ["Fluminense", "Rivadavia"],
   ["Platense", "Coquimbo Unido"],
 ];
 
