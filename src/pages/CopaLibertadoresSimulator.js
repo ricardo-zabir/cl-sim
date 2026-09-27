@@ -3,25 +3,30 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import { escudosPorNome } from "../escudos";
 import {
-  montarChaveamento,
   vencedorFinal,
   agregadoConfronto,
   placarKo,
+  vencedorConfrontoDuplo,
 } from "../knockoutLogic";
 import {
   PLACARES_OFICIAIS_GRUPOS,
   placarGrupoEhOficial,
 } from "../libertaOficialGrupos";
 import { montarSorteioOficialOitavas } from "../libertaOficialOitavas";
+import {
+  PLACARES_OFICIAIS_LIBERTA_KO,
+  placarLibertaKoEhOficial,
+  montarChaveamentoLibertadores,
+} from "../libertaOficialPlacares";
 
-function Escudo({ nome }) {
+function Escudo({ nome, className = "team-escudo" }) {
   const src = escudosPorNome[nome];
   if (!src) return null;
   return (
     <img
       src={src}
       alt=""
-      className="team-escudo"
+      className={className}
       loading="lazy"
       decoding="async"
     />
@@ -31,7 +36,7 @@ function Escudo({ nome }) {
 const grupos = {
   A: ["Flamengo","Estudiantes","Cusco","Independiente Medellín"],
   B: ["Nacional","Universitario","Coquimbo Unido","Deportes Tolima"],
-  C: ["Fluminense","Bolívar","Deportivo La Guaira","Independiente Rivadavia"],
+  C: ["Fluminense","Bolívar","Deportivo La Guaira","Rivadavia"],
   D: ["Boca Juniors","Cruzeiro","Universidad Católica","Barcelona"],
   E: ["Peñarol","Corinthians","Santa Fé","Platense"],
   F: ["Palmeiras","Cerro Porteño","Junior","Sporting Cristal"],
@@ -226,6 +231,31 @@ function rotuloTime(t) {
   return `${t.nome} (grp. ${t.grupo})`;
 }
 
+function golsEquipe(placar, mandante, visitante, equipeNome) {
+  if (!placar) return null;
+  if (equipeNome === mandante?.nome) {
+    return placar.casa == null ? null : placar.casa;
+  }
+  if (equipeNome === visitante?.nome) {
+    return placar.fora == null ? null : placar.fora;
+  }
+  return null;
+}
+
+function ladoDoPlacar(mandante, visitante, equipeNome) {
+  if (equipeNome === mandante?.nome) return "casa";
+  if (equipeNome === visitante?.nome) return "fora";
+  return null;
+}
+
+function chunkPares(lista) {
+  const pares = [];
+  for (let i = 0; i < lista.length; i += 2) {
+    pares.push([lista[i], lista[i + 1]]);
+  }
+  return pares;
+}
+
 export default function CopaLibertadoresSimulator(){
   const [placares, setPlacares] = useState(() => ({
     ...PLACARES_OFICIAIS_GRUPOS,
@@ -238,7 +268,9 @@ export default function CopaLibertadoresSimulator(){
     return inicial;
   });
   const [fase, setFase] = useState("mataMata");
-  const [koPlacares, setKoPlacares] = useState({});
+  const [koPlacares, setKoPlacares] = useState(() => ({
+    ...PLACARES_OFICIAIS_LIBERTA_KO,
+  }));
   const [pixCopiado, setPixCopiado] = useState(false);
 
   const mudarRodadaGrupo = useCallback((grupo, delta) => {
@@ -260,7 +292,7 @@ export default function CopaLibertadoresSimulator(){
   );
 
   useEffect(() => {
-    setKoPlacares({});
+    setKoPlacares({ ...PLACARES_OFICIAIS_LIBERTA_KO });
   }, [chaveKey]);
 
   const sorteio = useMemo(
@@ -281,6 +313,7 @@ export default function CopaLibertadoresSimulator(){
   };
 
   const handleKoChange = useCallback((id, lado, valor) => {
+    if (placarLibertaKoEhOficial(id)) return;
     const n = valor === "" ? null : Number(valor);
     setKoPlacares((prev) => ({
       ...prev,
@@ -290,6 +323,19 @@ export default function CopaLibertadoresSimulator(){
       },
     }));
   }, []);
+
+  const setGolsTime = useCallback(
+    (tie, legKey, equipeNome, valor) => {
+      if (!tie?.ida || !tie?.volta) return;
+      const leg = legKey === "ida" ? tie.ida : tie.volta;
+      const subId = `${tie.id}-${legKey}`;
+      if (placarLibertaKoEhOficial(subId)) return;
+      const lado = ladoDoPlacar(leg.mandante, leg.visitante, equipeNome);
+      if (!lado) return;
+      handleKoChange(subId, lado, valor);
+    },
+    [handleKoChange]
+  );
 
   const simularGrupo = useCallback((grupo) => {
     const times = grupos[grupo];
@@ -345,7 +391,7 @@ export default function CopaLibertadoresSimulator(){
   }, []);
 
   const bracket = useMemo(
-    () => montarChaveamento(sorteio, koPlacares),
+    () => montarChaveamentoLibertadores(sorteio, koPlacares),
     [sorteio, koPlacares]
   );
 
@@ -355,251 +401,169 @@ export default function CopaLibertadoresSimulator(){
     return vencedorFinal(final, koPlacares);
   }, [bracket.f, koPlacares]);
 
-  const renderConfrontoDuplo = (tie, opts = {}) => {
-    const { disabled } = opts;
-    const idaId = `${tie.id}-ida`;
-    const volId = `${tie.id}-volta`;
-    const penId = `${tie.id}-pen`;
-
-    if (!tie.sideA || !tie.sideB || !tie.ida || !tie.volta) {
+  const renderSlotDuplo = (tie, opts = {}) => {
+    const { disabled = false } = opts;
+    if (!tie?.sideA || !tie?.sideB || !tie?.ida || !tie?.volta) {
       return (
-        <div key={tie.id} className="ko-tie ko-tie--placeholder">
-          <p className="ko-tie__wait">Aguardando fase anterior</p>
-        </div>
+        <article key={tie?.id || "empty"} className="chave-slot chave-slot--empty">
+          <p className="chave-slot__wait">Aguardando</p>
+        </article>
       );
     }
 
-    const ag = agregadoConfronto(tie, koPlacares);
+    const idaId = `${tie.id}-ida`;
+    const volId = `${tie.id}-volta`;
+    const idaP = placarKo(koPlacares, idaId);
+    const volP = placarKo(koPlacares, volId);
+    const penId = `${tie.id}-pen`;
     const pen = placarKo(koPlacares, penId);
+    const ag = agregadoConfronto(tie, koPlacares);
     const mostrarPen = ag.completo && ag.empatado;
-    const primeiroPenEhSideA = tie.volta.mandante.nome === tie.sideA.nome;
-    const timePenPrimeiro = primeiroPenEhSideA ? tie.sideA : tie.sideB;
-    const timePenSegundo = primeiroPenEhSideA ? tie.sideB : tie.sideA;
-    const valorAgPrimeiro = primeiroPenEhSideA ? ag.agA : ag.agB;
-    const valorAgSegundo = primeiroPenEhSideA ? ag.agB : ag.agA;
-    const valorPenPrimeiro = primeiroPenEhSideA ? pen.a : pen.b;
-    const valorPenSegundo = primeiroPenEhSideA ? pen.b : pen.a;
-    const penTie =
-      mostrarPen && pen.a != null && pen.b != null && pen.a === pen.b;
+    const vencedor = vencedorConfrontoDuplo(tie, koPlacares);
+    const bloqueado = disabled || !tie.sideA || !tie.sideB;
+    const idaTravado = placarLibertaKoEhOficial(idaId);
+    const volTravado = placarLibertaKoEhOficial(volId);
+    const penTravado = placarLibertaKoEhOficial(penId);
 
-    const rowLeg = (label, subId, mandante, visitante) => {
-      const p = placarKo(koPlacares, subId);
+    const rowTime = (time, penLado) => {
+      const gIda = golsEquipe(idaP, tie.ida.mandante, tie.ida.visitante, time.nome);
+      const gVol = golsEquipe(volP, tie.volta.mandante, tie.volta.visitante, time.nome);
+      const avancou = vencedor && vencedor !== "tie" && vencedor.nome === time.nome;
       return (
-        <div className="ko-leg" key={subId}>
-          <div className="ko-leg__label">{label}</div>
-          <div className="ko-leg__row">
-            <div className="ko-leg__team ko-leg__team--home">
-              <span className="team-line team-line--home" title={rotuloTime(mandante)}>
-                <span className="team-line__name">{mandante.nome}</span>
-                <Escudo nome={mandante.nome} />
-              </span>
-            </div>
-            <div className="ko-leg__score">
+        <div
+          key={time.nome}
+          className={`chave-row${avancou ? " chave-row--winner" : ""}`}
+        >
+          <Escudo nome={time.nome} className="chave-escudo" />
+          <span className="chave-row__name" title={rotuloTime(time)}>
+            {time.nome}
+          </span>
+          <div className={`chave-row__scores${mostrarPen ? " chave-row__scores--pen" : ""}`}>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              readOnly={bloqueado || idaTravado}
+              className="chave-score"
+              placeholder="–"
+              title={idaTravado ? "Ida (oficial)" : "Ida"}
+              value={gIda ?? ""}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, "");
+                setGolsTime(tie, "ida", time.nome, v);
+              }}
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              readOnly={bloqueado || volTravado}
+              className="chave-score"
+              placeholder="–"
+              title={volTravado ? "Volta (oficial)" : "Volta"}
+              value={gVol ?? ""}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, "");
+                setGolsTime(tie, "volta", time.nome, v);
+              }}
+            />
+            {mostrarPen && (
               <input
-                type="number"
+                type="text"
                 inputMode="numeric"
-                min={0}
-                disabled={disabled}
-                className="score-input"
+                pattern="[0-9]*"
+                readOnly={bloqueado || penTravado}
+                className="chave-score chave-score--pen"
                 placeholder="–"
-                value={p.casa ?? ""}
-                onChange={(e) => handleKoChange(subId, "casa", e.target.value)}
+                title={`Pênaltis — ${time.nome}`}
+                value={pen[penLado] ?? ""}
+                onChange={(e) =>
+                  handleKoChange(penId, penLado, e.target.value.replace(/\D/g, ""))
+                }
               />
-              <span className="score-sep">×</span>
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                disabled={disabled}
-                className="score-input"
-                placeholder="–"
-                value={p.fora ?? ""}
-                onChange={(e) => handleKoChange(subId, "fora", e.target.value)}
-              />
-            </div>
-            <div className="ko-leg__team ko-leg__team--away">
-              <span className="team-line team-line--away" title={rotuloTime(visitante)}>
-                <Escudo nome={visitante.nome} />
-                <span className="team-line__name">{visitante.nome}</span>
-              </span>
-            </div>
+            )}
           </div>
         </div>
       );
     };
 
     return (
-      <div
+      <article
         key={tie.id}
-        className={`ko-tie ${disabled ? "ko-tie--disabled" : ""} ${penTie ? "ko-tie--tie" : ""}`}
+        className={`chave-slot${disabled ? " chave-slot--disabled" : ""}${mostrarPen ? " chave-slot--com-pen" : ""}`}
       >
-        {rowLeg("Ida", idaId, tie.ida.mandante, tie.ida.visitante)}
-        {rowLeg("Volta", volId, tie.volta.mandante, tie.volta.visitante)}
-        {ag.completo && (
-          <div className="ko-tie__agg">
-            Agregado: <strong>{timePenPrimeiro.nome}</strong> {valorAgPrimeiro} ×{" "}
-            {valorAgSegundo} <strong>{timePenSegundo.nome}</strong>
-          </div>
-        )}
-        {mostrarPen && (
-          <div className="ko-tie__pen">
-            <span className="ko-tie__pen-label">Pênaltis</span>
-            <div className="ko-tie__pen-row">
-              <span className="ko-tie__pen-side" title={timePenPrimeiro.nome}>
-                {timePenPrimeiro.nome}
-              </span>
-              <div className="ko-tie__pen-score">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  disabled={disabled}
-                  className="score-input score-input--pen"
-                  placeholder="–"
-                  value={valorPenPrimeiro ?? ""}
-                  onChange={(e) =>
-                    handleKoChange(
-                      penId,
-                      primeiroPenEhSideA ? "a" : "b",
-                      e.target.value
-                    )
-                  }
-                />
-                <span className="score-sep">×</span>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  disabled={disabled}
-                  className="score-input score-input--pen"
-                  placeholder="–"
-                  value={valorPenSegundo ?? ""}
-                  onChange={(e) =>
-                    handleKoChange(
-                      penId,
-                      primeiroPenEhSideA ? "b" : "a",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-              <span className="ko-tie__pen-side" title={timePenSegundo.nome}>
-                {timePenSegundo.nome}
-              </span>
-            </div>
-          </div>
-        )}
-        {penTie && (
-          <p className="ko-match__warn">
-            Empate — altere um dos valores (pênaltis empatados).
-          </p>
-        )}
-      </div>
+        {rowTime(tie.sideA, "a")}
+        {rowTime(tie.sideB, "b")}
+      </article>
     );
   };
 
-  const renderFinal = (match) => {
+  const renderFinalChave = (match) => {
     const disabled = !match.sideA || !match.sideB || match.pendingTie;
     const p = placarKo(koPlacares, match.id);
-    const regTie = p.a != null && p.b != null && p.a === p.b;
     const penId = `${match.id}-pen`;
     const pen = placarKo(koPlacares, penId);
-    const penTie =
-      regTie && pen.a != null && pen.b != null && pen.a === pen.b;
+    const regTie = p.a != null && p.b != null && p.a === p.b;
 
-    return (
-      <div
-        key={match.id}
-        className={`ko-match ${disabled ? "ko-match--disabled" : ""} ${penTie ? "ko-match--tie" : ""}`}
-      >
-        <div className="ko-match__teams">
-          <span className="ko-match__team" title={match.sideA ? rotuloTime(match.sideA) : ""}>
-            {match.sideA ? (
-              <span className="team-line team-line--away">
-                <Escudo nome={match.sideA.nome} />
-                <span className="team-line__name">{match.sideA.nome}</span>
-              </span>
-            ) : (
-              "Aguardando fase anterior"
-            )}
-          </span>
-          <div className="ko-match__score">
+    if (!match.sideA || !match.sideB) {
+      return (
+        <article className="chave-slot chave-slot--final chave-slot--empty">
+          <p className="chave-slot__wait">Aguardando semis</p>
+        </article>
+      );
+    }
+
+    const row = (time, lado) => (
+      <div key={time.nome} className="chave-row">
+        <Escudo nome={time.nome} className="chave-escudo" />
+        <span className="chave-row__name" title={rotuloTime(time)}>
+          {time.nome}
+        </span>
+        <div className={`chave-row__scores${regTie ? " chave-row__scores--pen" : ""}`}>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            readOnly={disabled}
+            className="chave-score"
+            placeholder="–"
+            value={p[lado] ?? ""}
+            onChange={(e) =>
+              handleKoChange(match.id, lado, e.target.value.replace(/\D/g, ""))
+            }
+          />
+          {regTie && (
             <input
-              type="number"
+              type="text"
               inputMode="numeric"
-              min={0}
-              disabled={disabled || !match.sideA || !match.sideB}
-              className="score-input"
+              pattern="[0-9]*"
+              readOnly={disabled}
+              className="chave-score chave-score--pen"
               placeholder="–"
-              value={p.a ?? ""}
-              onChange={(e) => handleKoChange(match.id, "a", e.target.value)}
+              title={`Pênaltis — ${time.nome}`}
+              value={pen[lado] ?? ""}
+              onChange={(e) =>
+                handleKoChange(penId, lado, e.target.value.replace(/\D/g, ""))
+              }
             />
-            <span className="score-sep">×</span>
-            <input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              disabled={disabled || !match.sideA || !match.sideB}
-              className="score-input"
-              placeholder="–"
-              value={p.b ?? ""}
-              onChange={(e) => handleKoChange(match.id, "b", e.target.value)}
-            />
-          </div>
-          <span className="ko-match__team ko-match__team--away" title={match.sideB ? rotuloTime(match.sideB) : ""}>
-            {match.sideB ? (
-              <span className="team-line team-line--home">
-                <span className="team-line__name">{match.sideB.nome}</span>
-                <Escudo nome={match.sideB.nome} />
-              </span>
-            ) : (
-              "Aguardando fase anterior"
-            )}
-          </span>
+          )}
         </div>
-        {regTie && (
-          <div className="ko-tie__pen" role="group" aria-label="Pênaltis">
-            <span className="ko-tie__pen-label">Pênaltis</span>
-            <div className="ko-tie__pen-row">
-              <span className="ko-tie__pen-side" title={match.sideA.nome}>
-                {match.sideA.nome}
-              </span>
-              <div className="ko-tie__pen-score">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  disabled={disabled || !match.sideA || !match.sideB}
-                  className="score-input score-input--pen"
-                  placeholder="–"
-                  value={pen.a ?? ""}
-                  onChange={(e) => handleKoChange(penId, "a", e.target.value)}
-                />
-                <span className="score-sep">×</span>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  disabled={disabled || !match.sideA || !match.sideB}
-                  className="score-input score-input--pen"
-                  placeholder="–"
-                  value={pen.b ?? ""}
-                  onChange={(e) => handleKoChange(penId, "b", e.target.value)}
-                />
-              </div>
-              <span className="ko-tie__pen-side" title={match.sideB.nome}>
-                {match.sideB.nome}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {penTie && (
-          <p className="ko-match__warn">Empate — altere um dos valores (pênaltis empatados).</p>
-        )}
       </div>
     );
+
+    return (
+      <article
+        className={`chave-slot chave-slot--final${disabled ? " chave-slot--disabled" : ""}${regTie ? " chave-slot--com-pen" : ""}`}
+      >
+        {row(match.sideA, "a")}
+        {row(match.sideB, "b")}
+      </article>
+    );
   };
+
+  const paresOitavas = chunkPares(bracket.r16 || []);
+  const paresQuartas = chunkPares(bracket.qf || []);
+  const paresSemis = chunkPares(bracket.sf || []);
 
   return (
     <div className="app-root theme-libertadores">
@@ -630,11 +594,11 @@ export default function CopaLibertadoresSimulator(){
           </button>
         </div>
         <h1 className="app-title">Simulador Copa Libertadores 2026</h1>
-        <p className="app-subtitle">
-          {fase === "grupos"
-            ? "Preencha todos os resultados da fase de grupos para liberar a fase mata-mata. Os dois melhores de cada grupo avançam. O botão “Simular grupo” preenche automaticamente os resultados restantes."
-            : "Oitavas com chaveamento oficial: ida na casa do time à esquerda de cada confronto. Quartas e semifinais: mando na volta para a melhor campanha na fase de grupos. Empate no agregado ou na final vai para pênaltis."}
-        </p>
+        {fase === "grupos" && (
+          <p className="app-subtitle">
+            Preencha todos os resultados da fase de grupos para liberar a fase mata-mata. Os dois melhores de cada grupo avançam. O botão “Simular grupo” preenche automaticamente os resultados restantes.
+          </p>
+        )}
       </header>
 
       {fase === "grupos" && (
@@ -804,55 +768,73 @@ export default function CopaLibertadoresSimulator(){
           )}
 
           {sorteio && (
-            <>
-              <div className="bracket">
-                <section className="bracket__round">
-                  <h2 className="bracket__title">Oitavas de final</h2>
-                  <div className="bracket__matches bracket__matches--ties">
-                    {bracket.r16.map((m) => renderConfrontoDuplo(m, { disabled: false }))}
+            <div className="chave-wrap">
+              <div className="chave" role="region" aria-label="Chaveamento Libertadores">
+                <div className="chave__col">
+                  <h2 className="chave__title">Oitavas</h2>
+                  <div className="chave__col-body">
+                    {paresOitavas.map((par, i) => (
+                      <div key={`r16-pair-${i}`} className="chave__pair">
+                        {renderSlotDuplo(par[0])}
+                        {renderSlotDuplo(par[1])}
+                      </div>
+                    ))}
                   </div>
-                </section>
-
-                <section className="bracket__round">
-                  <h2 className="bracket__title">Quartas de final</h2>
-                  <div className="bracket__matches bracket__matches--ties">
-                    {bracket.qf.map((m) =>
-                      renderConfrontoDuplo(m, {
-                        disabled: !m.sideA || !m.sideB || m.pendingTie,
-                      })
-                    )}
-                  </div>
-                </section>
-
-                <section className="bracket__round">
-                  <h2 className="bracket__title">Semifinais</h2>
-                  <div className="bracket__matches bracket__matches--ties">
-                    {bracket.sf.map((m) =>
-                      renderConfrontoDuplo(m, {
-                        disabled: !m.sideA || !m.sideB || m.pendingTie,
-                      })
-                    )}
-                  </div>
-                </section>
-
-                <section className="bracket__round bracket__round--final">
-                  <h2 className="bracket__title">Final</h2>
-                  <div className="bracket__matches">
-                    {bracket.f.map((m) => renderFinal(m))}
-                  </div>
-                </section>
-              </div>
-
-              {campeao && campeao !== "tie" && (
-                <div className="knockout__champion">
-                  <span className="knockout__champion-label">Campeão</span>
-                  <span className="knockout__champion-name">
-                    <Escudo nome={campeao.nome} />
-                    {campeao.nome}
-                  </span>
                 </div>
-              )}
-            </>
+
+                <div className="chave__col chave__col--qf">
+                  <h2 className="chave__title">Quartas</h2>
+                  <div className="chave__col-body">
+                    {paresQuartas.map((par, i) => (
+                      <div key={`qf-pair-${i}`} className="chave__pair chave__pair--qf">
+                        {renderSlotDuplo(par[0], {
+                          disabled: !par[0]?.sideA || !par[0]?.sideB || par[0]?.pendingTie,
+                        })}
+                        {renderSlotDuplo(par[1], {
+                          disabled: !par[1]?.sideA || !par[1]?.sideB || par[1]?.pendingTie,
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="chave__col chave__col--sf">
+                  <h2 className="chave__title">Semis</h2>
+                  <div className="chave__col-body">
+                    {paresSemis.map((par, i) => (
+                      <div key={`sf-pair-${i}`} className="chave__pair chave__pair--sf">
+                        {renderSlotDuplo(par[0], {
+                          disabled: !par[0]?.sideA || !par[0]?.sideB || par[0]?.pendingTie,
+                        })}
+                        {renderSlotDuplo(par[1], {
+                          disabled: !par[1]?.sideA || !par[1]?.sideB || par[1]?.pendingTie,
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="chave__col chave__col--final">
+                  <h2 className="chave__title">Final</h2>
+                  <div className="chave__col-body chave__col-body--final">
+                    {bracket.f.map((m) => (
+                      <div key={m.id} className="chave__pair chave__pair--final">
+                        {renderFinalChave(m)}
+                      </div>
+                    ))}
+                    {campeao && campeao !== "tie" && (
+                      <div className="chave-campeao">
+                        <span className="chave-campeao__label">Campeão</span>
+                        <span className="chave-campeao__name">
+                          <Escudo nome={campeao.nome} className="chave-escudo" />
+                          {campeao.nome}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       )}

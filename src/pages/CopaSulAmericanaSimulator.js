@@ -1,15 +1,15 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
-import { escudoCopaPorNome } from "../escudosCopaBrasil";
+import { escudoSulaPorNome } from "../escudosSulAmericana";
 import {
-  montarOitavasCopaBrasil,
-  montarChaveamentoCopaBrasil,
-} from "../copaBrasilChaveamento";
+  montarOitavasSulAmericana,
+  montarChaveamentoSulAmericana,
+} from "../sulaChaveamento";
 import {
-  PLACARES_OFICIAIS_COPA,
-  placarCopaEhOficial,
-} from "../copaBrasilOficialPlacares";
+  PLACARES_OFICIAIS_SULA,
+  placarSulaEhOficial,
+} from "../sulaOficialPlacares";
 import {
   vencedorFinal,
   agregadoConfronto,
@@ -21,7 +21,7 @@ const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
 const CHAVE_PIX_TEMPLATE = "75df5998-b352-4f8b-a0c1-38bedec43b2c";
 
 function Escudo({ nome }) {
-  const src = escudoCopaPorNome(nome);
+  const src = escudoSulaPorNome(nome);
   if (!src) return null;
   return (
     <img
@@ -59,20 +59,20 @@ function chunkPares(lista) {
   return pares;
 }
 
-export default function CopaDoBrasilSimulator() {
-  const oitavasTies = useMemo(() => montarOitavasCopaBrasil(), []);
+export default function CopaSulAmericanaSimulator() {
+  const oitavasTies = useMemo(() => montarOitavasSulAmericana(), []);
   const [koPlacares, setKoPlacares] = useState(() => ({
-    ...PLACARES_OFICIAIS_COPA,
+    ...PLACARES_OFICIAIS_SULA,
   }));
   const [pixCopiado, setPixCopiado] = useState(false);
 
   const bracket = useMemo(
-    () => montarChaveamentoCopaBrasil(oitavasTies, koPlacares),
+    () => montarChaveamentoSulAmericana(oitavasTies, koPlacares),
     [oitavasTies, koPlacares]
   );
 
   const handleKoChange = useCallback((id, lado, valor) => {
-    if (placarCopaEhOficial(id)) return;
+    if (placarSulaEhOficial(id)) return;
     const n = valor === "" ? null : Number(valor);
     setKoPlacares((prev) => ({
       ...prev,
@@ -141,9 +141,9 @@ export default function CopaDoBrasilSimulator() {
     const pen = placarKo(koPlacares, penId);
     const ag = agregadoConfronto(tie, koPlacares);
     const mostrarPen = ag.completo && ag.empatado;
-    const penTravado = placarCopaEhOficial(penId);
-    const idaTravado = placarCopaEhOficial(idaId);
-    const volTravado = placarCopaEhOficial(volId);
+    const penTravado = placarSulaEhOficial(penId);
+    const idaTravado = placarSulaEhOficial(idaId);
+    const volTravado = placarSulaEhOficial(volId);
     const vencedor = vencedorConfrontoDuplo(tie, koPlacares);
     const bloqueado = disabled || !tie.sideA || !tie.sideB;
 
@@ -288,16 +288,16 @@ export default function CopaDoBrasilSimulator() {
   const paresSemis = chunkPares(bracket.sf);
 
   return (
-    <div className="app-root theme-copa-brasil">
+    <div className="app-root theme-sul-americana">
       <header className="app-header">
         <Link className="app-back-home" to="/">
           ← Competições
         </Link>
-        <h1 className="app-title">Simulador Copa do Brasil</h1>
+        <h1 className="app-title">Simulador Copa Sul-Americana 2026</h1>
       </header>
 
       <div className="chave-wrap">
-        <div className="chave" role="region" aria-label="Chaveamento Copa do Brasil">
+        <div className="chave" role="region" aria-label="Chaveamento Sul-Americana">
           <div className="chave__col">
             <h2 className="chave__title">Oitavas</h2>
             <div className="chave__col-body">

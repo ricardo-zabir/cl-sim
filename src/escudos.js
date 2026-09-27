@@ -44,6 +44,7 @@ export const escudosPorNome = {
   Fluminense: fluminense,
   Bolívar: bolivar,
   "Deportivo La Guaira": deportivoLaGuaira,
+  Rivadavia: independienteRivadavia,
   "Independiente Rivadavia": independienteRivadavia,
   "Boca Juniors": bocaJuniors,
   Cruzeiro: cruzeiro,
