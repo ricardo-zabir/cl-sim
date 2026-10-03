@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logoLibertadores from "../assets/copa-libertadores-logo.png";
 import logoSulAmericana from "../assets/copa-sul-americana-logo.png";
 import logoCopaBrasil from "../assets/CopaDoBrasil.png";
+import logoChampionsLeague from "../assets/Logo_UEFA_Champions_League.png";
 import "../App.css";
 
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
@@ -29,6 +30,13 @@ const COMPETICOES = [
     logo: logoCopaBrasil,
     title: "Copa do Brasil",
     meta: "A Taça do Povo",
+  },
+  {
+    id: "champions-league",
+    to: "/champions-league",
+    logo: logoChampionsLeague,
+    title: "Champions League 26/27",
+    meta: "The Beautiful Game",
   },
 ];
 

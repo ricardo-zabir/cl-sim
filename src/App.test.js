@@ -16,7 +16,10 @@ test('renders home with competitions list', () => {
     'href',
     '/copa-do-brasil'
   );
-  expect(screen.queryByRole('link', { name: /Champions League/i })).not.toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /Champions League 26\/27/i })).toHaveAttribute(
+    'href',
+    '/champions-league'
+  );
   expect(screen.queryByRole('link', { name: /Europa League/i })).not.toBeInTheDocument();
   expect(screen.queryByRole('link', { name: /Copa do Mundo 2026/i })).not.toBeInTheDocument();
   expect(screen.queryByText(/competições disponíveis/i)).not.toBeInTheDocument();

@@ -20,7 +20,7 @@ import {
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
 const CHAVE_PIX_TEMPLATE = "75df5998-b352-4f8b-a0c1-38bedec43b2c";
 
-function Escudo({ nome }) {
+function Escudo({ nome, style }) {
   const src = escudoCopaPorNome(nome);
   if (!src) return null;
   return (
@@ -28,6 +28,7 @@ function Escudo({ nome }) {
       src={src}
       alt=""
       className="chave-escudo"
+      style={style}
       loading="lazy"
       decoding="async"
     />
@@ -146,76 +147,113 @@ export default function CopaDoBrasilSimulator() {
     const volTravado = placarCopaEhOficial(volId);
     const vencedor = vencedorConfrontoDuplo(tie, koPlacares);
     const bloqueado = disabled || !tie.sideA || !tie.sideB;
+    const rowOf = (time) => (time.nome === tie.sideA.nome ? 1 : 2);
+    const winA =
+      vencedor && vencedor !== "tie" && vencedor.nome === tie.sideA.nome;
+    const winB =
+      vencedor && vencedor !== "tie" && vencedor.nome === tie.sideB.nome;
 
-    const rowTime = (time, penLado) => {
-      const gIda = golsEquipe(idaP, tie.ida.mandante, tie.ida.visitante, time.nome);
-      const gVol = golsEquipe(volP, tie.volta.mandante, tie.volta.visitante, time.nome);
-      const avancou = vencedor && vencedor !== "tie" && vencedor.nome === time.nome;
+    const inputGols = (leg, time, col) => {
+      const travado = leg === "ida" ? idaTravado : volTravado;
+      const placar = leg === "ida" ? idaP : volP;
+      const jogo = leg === "ida" ? tie.ida : tie.volta;
+      const gols = golsEquipe(placar, jogo.mandante, jogo.visitante, time.nome);
+      const row = rowOf(time);
       return (
-        <div
-          key={time.nome}
-          className={`chave-row${avancou ? " chave-row--winner" : ""}`}
-        >
-          <Escudo nome={time.nome} />
-          <span className="chave-row__name" title={time.nome}>
-            {time.nome}
-          </span>
-          <div className={`chave-row__scores${mostrarPen ? " chave-row__scores--pen" : ""}`}>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              readOnly={bloqueado || idaTravado}
-              className="chave-score"
-              placeholder="–"
-              title={idaTravado ? "Ida (oficial)" : "Ida"}
-              value={gIda ?? ""}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, "");
-                setGolsTime(tie, "ida", time.nome, v);
-              }}
-            />
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              readOnly={bloqueado || volTravado}
-              className="chave-score"
-              placeholder="–"
-              title={volTravado ? "Volta (oficial)" : "Volta"}
-              value={gVol ?? ""}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, "");
-                setGolsTime(tie, "volta", time.nome, v);
-              }}
-            />
-            {mostrarPen && (
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                readOnly={bloqueado || penTravado}
-                className="chave-score chave-score--pen"
-                placeholder="–"
-                title={`Pênaltis — ${time.nome}`}
-                value={pen[penLado] ?? ""}
-                onChange={(e) =>
-                  handleKoChange(penId, penLado, e.target.value.replace(/\D/g, ""))
-                }
-              />
-            )}
-          </div>
-        </div>
+        <input
+          key={`${leg}-${time.nome}`}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          readOnly={bloqueado || travado}
+          className={`chave-score chave-tabjogo__${leg}`}
+          style={{ gridColumn: col, gridRow: row }}
+          placeholder="–"
+          title={
+            travado
+              ? `${leg === "ida" ? "Ida" : "Volta"} (oficial)`
+              : leg === "ida"
+                ? "Ida"
+                : "Volta"
+          }
+          value={gols ?? ""}
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, "");
+            setGolsTime(tie, leg, time.nome, v);
+          }}
+        />
       );
     };
 
     return (
       <article
         key={tie.id}
-        className={`chave-slot${disabled ? " chave-slot--disabled" : ""}${mostrarPen ? " chave-slot--com-pen" : ""}`}
+        className={`chave-slot chave-slot--tabjogo${disabled ? " chave-slot--disabled" : ""}${mostrarPen ? " chave-slot--com-pen" : ""}`}
       >
-        {rowTime(tie.sideA, "a")}
-        {rowTime(tie.sideB, "b")}
+        <div
+          className={`chave-tabjogo__bg chave-tabjogo__bg--a${winA ? " chave-tabjogo__bg--winner" : ""}`}
+          aria-hidden
+        />
+        <div
+          className={`chave-tabjogo__bg chave-tabjogo__bg--b${winB ? " chave-tabjogo__bg--winner" : ""}`}
+          aria-hidden
+        />
+
+        <Escudo nome={tie.sideA.nome} style={{ gridColumn: 1, gridRow: 1 }} />
+        <span
+          className={`chave-row__name${winA ? " chave-row--winner-name" : ""}`}
+          style={{ gridColumn: 2, gridRow: 1 }}
+          title={tie.sideA.nome}
+        >
+          {tie.sideA.nome}
+        </span>
+        <Escudo nome={tie.sideB.nome} style={{ gridColumn: 1, gridRow: 2 }} />
+        <span
+          className={`chave-row__name${winB ? " chave-row--winner-name" : ""}`}
+          style={{ gridColumn: 2, gridRow: 2 }}
+          title={tie.sideB.nome}
+        >
+          {tie.sideB.nome}
+        </span>
+
+        {/* Ordem de Tab = jogo a jogo: ida casa→fora, volta casa→fora */}
+        {inputGols("ida", tie.ida.mandante, 3)}
+        {inputGols("ida", tie.ida.visitante, 3)}
+        {inputGols("volta", tie.volta.mandante, 4)}
+        {inputGols("volta", tie.volta.visitante, 4)}
+
+        {mostrarPen && (
+          <>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              readOnly={bloqueado || penTravado}
+              className="chave-score chave-score--pen"
+              style={{ gridColumn: 5, gridRow: 1 }}
+              placeholder="–"
+              title={`Pênaltis — ${tie.sideA.nome}`}
+              value={pen.a ?? ""}
+              onChange={(e) =>
+                handleKoChange(penId, "a", e.target.value.replace(/\D/g, ""))
+              }
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              readOnly={bloqueado || penTravado}
+              className="chave-score chave-score--pen"
+              style={{ gridColumn: 5, gridRow: 2 }}
+              placeholder="–"
+              title={`Pênaltis — ${tie.sideB.nome}`}
+              value={pen.b ?? ""}
+              onChange={(e) =>
+                handleKoChange(penId, "b", e.target.value.replace(/\D/g, ""))
+              }
+            />
+          </>
+        )}
       </article>
     );
   };
