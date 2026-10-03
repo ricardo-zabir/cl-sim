@@ -1,4 +1,4 @@
-import { stripPos, vencedorConfrontoDuplo } from "./knockoutLogic";
+import { vencedorConfrontoDuplo } from "./knockoutLogic";
 import { JOGOS_UCL_LIGA } from "./uclLiga2627";
 
 function timeDe(row, pos) {
@@ -14,20 +14,39 @@ function timeDe(row, pos) {
   };
 }
 
-export function confrontoDuplo({ sideA, sideB, id, idaMandanteEhSideA = true }) {
-  const A = stripPos(sideA);
-  const B = stripPos(sideB);
+/** Mantém a posição da fase de liga (manda na volta quem terminou à frente). */
+function keepTeam(t) {
+  if (!t) return null;
+  return {
+    nome: t.nome,
+    grupo: t.grupo,
+    pos: t.pos,
+    grpPts: t.grpPts ?? 0,
+    grpSG: t.grpSG ?? 0,
+    grpGP: t.grpGP ?? 0,
+    grpGC: t.grpGC ?? 0,
+  };
+}
+
+/**
+ * Ida/volta: pior classificado da liga manda na ida (linha de cima);
+ * melhor (pos menor) manda na volta (linha de baixo). Final é jogo único.
+ */
+export function confrontoDuplo({ sideA, sideB, id }) {
+  const A = keepTeam(sideA);
+  const B = keepTeam(sideB);
+  const posA = A.pos ?? Number.POSITIVE_INFINITY;
+  const posB = B.pos ?? Number.POSITIVE_INFINITY;
+  const aMelhor = posA <= posB;
+  const melhor = aMelhor ? A : B;
+  const pior = aMelhor ? B : A;
   return {
     id,
     tipo: "duas",
-    sideA: A,
-    sideB: B,
-    ida: idaMandanteEhSideA
-      ? { mandante: A, visitante: B }
-      : { mandante: B, visitante: A },
-    volta: idaMandanteEhSideA
-      ? { mandante: B, visitante: A }
-      : { mandante: A, visitante: B },
+    sideA: pior,
+    sideB: melhor,
+    ida: { mandante: pior, visitante: melhor },
+    volta: { mandante: melhor, visitante: pior },
   };
 }
 
@@ -135,13 +154,11 @@ export function sortearChaveUcl(tabela) {
       const slot = PO_SLOTS[i];
       const uns = pick(slot.uns, half);
       const seed = pick(slot.seed, half);
-      // Ida: não-cabeça (uns) em casa; volta: cabeça (seed) em casa
       po.push(
         confrontoDuplo({
           sideA: uns,
           sideB: seed,
           id: `ucl-po-${half * 4 + i}`,
-          idaMandanteEhSideA: true,
         })
       );
     }
@@ -181,7 +198,11 @@ export function montarChaveamentoUcl(sorteio, placares) {
     };
   }
 
-  const po = sorteio.po.map((tie) => ({ ...tie }));
+  const po = sorteio.po.map((tie) =>
+    tie?.sideA && tie?.sideB
+      ? confrontoDuplo({ sideA: tie.sideA, sideB: tie.sideB, id: tie.id })
+      : { ...tie }
+  );
 
   const wPo = po.map((m) =>
     m.sideA && m.sideB ? vencedorConfrontoDuplo(m, placares) : null
@@ -195,20 +216,18 @@ export function montarChaveamentoUcl(sorteio, placares) {
         id: `ucl-r16-${i}`,
         tipo: "duas",
         sideA: null,
-        sideB: seed ? stripPos(seed) : null,
+        sideB: seed ? keepTeam(seed) : null,
         ida: null,
         volta: null,
         pendingTie: bad,
         waitingPo: true,
-        seedSide: seed ? stripPos(seed) : null,
+        seedSide: seed ? keepTeam(seed) : null,
       };
     }
-    // Ida: vencedor do playoff em casa; volta: seed (1–8) em casa
     return confrontoDuplo({
       sideA: wa,
       sideB: seed,
       id: `ucl-r16-${i}`,
-      idaMandanteEhSideA: true,
     });
   });
 
@@ -237,7 +256,6 @@ export function montarChaveamentoUcl(sorteio, placares) {
           sideA: wa,
           sideB: wb,
           id: `ucl-qf-${i}`,
-          idaMandanteEhSideA: true,
         })
       );
     }
@@ -268,7 +286,6 @@ export function montarChaveamentoUcl(sorteio, placares) {
           sideA: wa,
           sideB: wb,
           id: `ucl-sf-${i}`,
-          idaMandanteEhSideA: true,
         })
       );
     }
@@ -290,8 +307,8 @@ export function montarChaveamentoUcl(sorteio, placares) {
       {
         id: "ucl-f-0",
         tipo: "unica",
-        sideA: wa && wa !== "tie" ? stripPos(wa) : null,
-        sideB: wb && wb !== "tie" ? stripPos(wb) : null,
+        sideA: wa && wa !== "tie" ? keepTeam(wa) : null,
+        sideB: wb && wb !== "tie" ? keepTeam(wb) : null,
         pendingTie: badF,
       },
     ],

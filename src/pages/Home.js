@@ -36,7 +36,7 @@ const COMPETICOES = [
     to: "/champions-league",
     logo: logoChampionsLeague,
     title: "Champions League 26/27",
-    meta: "Fase de liga · 36 clubes",
+    meta: "The Beautiful Game",
   },
 ];
 

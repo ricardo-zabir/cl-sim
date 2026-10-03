@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
 import { escudoUCLPorNome } from "../escudosChampionsLeague";
@@ -27,16 +35,23 @@ import {
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
 const CHAVE_PIX_TEMPLATE = "75df5998-b352-4f8b-a0c1-38bedec43b2c";
 
-function Escudo({ nome, className = "team-escudo" }) {
+function Escudo({ nome, className = "team-escudo", style }) {
   const src = escudoUCLPorNome(nome);
   if (!src) {
-    return <span className={`${className} team-escudo--placeholder`} aria-hidden />;
+    return (
+      <span
+        className={`${className} team-escudo--placeholder`}
+        style={style}
+        aria-hidden
+      />
+    );
   }
   return (
     <img
       src={src}
       alt=""
       className={className}
+      style={style}
       loading="lazy"
       decoding="async"
     />
@@ -93,8 +108,15 @@ export default function ChampionsLeagueSimulator() {
   const [koPlacares, setKoPlacares] = useState({});
   const [sorteio, setSorteio] = useState(null);
   const [pixCopiado, setPixCopiado] = useState(false);
+  const scrollYAoEditarRef = useRef(null);
 
-  const tabela = useMemo(() => calcularTabelaUclLiga(placares), [placares]);
+  // Classificação pode atualizar um frame depois — evita o scroll “pular”
+  // quando a tabela acima dos jogos remonta no mobile.
+  const placaresTabela = useDeferredValue(placares);
+  const tabela = useMemo(
+    () => calcularTabelaUclLiga(placaresTabela),
+    [placaresTabela]
+  );
   const tabelaEsq = useMemo(() => tabela.slice(0, 18), [tabela]);
   const tabelaDir = useMemo(() => tabela.slice(18, 36), [tabela]);
   const jogos = useMemo(() => jogosDaRodada(rodada), [rodada]);
@@ -114,9 +136,16 @@ export default function ChampionsLeagueSimulator() {
     [sorteio, koPlacares]
   );
 
+  useLayoutEffect(() => {
+    if (scrollYAoEditarRef.current == null) return;
+    window.scrollTo(0, scrollYAoEditarRef.current);
+    scrollYAoEditarRef.current = null;
+  });
+
   const handlePlacar = useCallback((id, lado, valor) => {
     if (placarUclLigaEhOficial(id)) return;
     const n = valor === "" ? null : Number(valor);
+    scrollYAoEditarRef.current = window.scrollY;
     setPlacares((prev) => ({
       ...prev,
       [id]: {
@@ -124,8 +153,8 @@ export default function ChampionsLeagueSimulator() {
         [lado]: Number.isFinite(n) ? n : null,
       },
     }));
-    setSorteio(null);
-    setKoPlacares({});
+    setSorteio((s) => (s == null ? s : null));
+    setKoPlacares((prev) => (Object.keys(prev).length === 0 ? prev : {}));
   }, []);
 
   const handleKoChange = useCallback((id, lado, valor) => {
@@ -326,76 +355,113 @@ export default function ChampionsLeagueSimulator() {
     const mostrarPen = ag.completo && ag.empatado;
     const vencedor = vencedorConfrontoDuplo(tie, koPlacares);
     const bloqueado = disabled || !sorteio;
+    const rowOf = (time) => (time.nome === tie.sideA.nome ? 1 : 2);
+    const winA =
+      vencedor && vencedor !== "tie" && vencedor.nome === tie.sideA.nome;
+    const winB =
+      vencedor && vencedor !== "tie" && vencedor.nome === tie.sideB.nome;
 
-    const rowTime = (time, penLado) => {
-      const gIda = golsEquipe(idaP, tie.ida.mandante, tie.ida.visitante, time.nome);
-      const gVol = golsEquipe(volP, tie.volta.mandante, tie.volta.visitante, time.nome);
-      const avancou = vencedor && vencedor !== "tie" && vencedor.nome === time.nome;
+    const inputGols = (leg, time, col) => {
+      const placar = leg === "ida" ? idaP : volP;
+      const jogo = leg === "ida" ? tie.ida : tie.volta;
+      const gols = golsEquipe(placar, jogo.mandante, jogo.visitante, time.nome);
+      const row = rowOf(time);
       return (
-        <div
-          key={time.nome}
-          className={`chave-row${avancou ? " chave-row--winner" : ""}`}
-        >
-          <Escudo nome={time.nome} className="chave-escudo" />
-          <span className="chave-row__name" title={time.nome}>
-            {time.nome}
-          </span>
-          <div className={`chave-row__scores${mostrarPen ? " chave-row__scores--pen" : ""}`}>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              readOnly={bloqueado}
-              className="chave-score"
-              placeholder="–"
-              title="Ida"
-              value={gIda ?? ""}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, "");
-                setGolsTime(tie, "ida", time.nome, v);
-              }}
-            />
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              readOnly={bloqueado}
-              className="chave-score"
-              placeholder="–"
-              title="Volta"
-              value={gVol ?? ""}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, "");
-                setGolsTime(tie, "volta", time.nome, v);
-              }}
-            />
-            {mostrarPen && (
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                readOnly={bloqueado}
-                className="chave-score chave-score--pen"
-                placeholder="–"
-                title={`Pênaltis — ${time.nome}`}
-                value={pen[penLado] ?? ""}
-                onChange={(e) =>
-                  handleKoChange(penId, penLado, e.target.value.replace(/\D/g, ""))
-                }
-              />
-            )}
-          </div>
-        </div>
+        <input
+          key={`${leg}-${time.nome}`}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          readOnly={bloqueado}
+          className={`chave-score chave-tabjogo__${leg}`}
+          style={{ gridColumn: col, gridRow: row }}
+          placeholder="–"
+          title={leg === "ida" ? "Ida" : "Volta"}
+          value={gols ?? ""}
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, "");
+            setGolsTime(tie, leg, time.nome, v);
+          }}
+        />
       );
     };
 
     return (
       <article
         key={tie.id}
-        className={`chave-slot${bloqueado ? " chave-slot--disabled" : ""}${mostrarPen ? " chave-slot--com-pen" : ""}`}
+        className={`chave-slot chave-slot--tabjogo${bloqueado ? " chave-slot--disabled" : ""}${mostrarPen ? " chave-slot--com-pen" : ""}`}
       >
-        {rowTime(tie.sideA, "a")}
-        {rowTime(tie.sideB, "b")}
+        <div
+          className={`chave-tabjogo__bg chave-tabjogo__bg--a${winA ? " chave-tabjogo__bg--winner" : ""}`}
+          aria-hidden
+        />
+        <div
+          className={`chave-tabjogo__bg chave-tabjogo__bg--b${winB ? " chave-tabjogo__bg--winner" : ""}`}
+          aria-hidden
+        />
+
+        <Escudo
+          nome={tie.sideA.nome}
+          className="chave-escudo"
+          style={{ gridColumn: 1, gridRow: 1 }}
+        />
+        <span
+          className={`chave-row__name${winA ? " chave-row--winner-name" : ""}`}
+          style={{ gridColumn: 2, gridRow: 1 }}
+          title={tie.sideA.nome}
+        >
+          {tie.sideA.nome}
+        </span>
+        <Escudo
+          nome={tie.sideB.nome}
+          className="chave-escudo"
+          style={{ gridColumn: 1, gridRow: 2 }}
+        />
+        <span
+          className={`chave-row__name${winB ? " chave-row--winner-name" : ""}`}
+          style={{ gridColumn: 2, gridRow: 2 }}
+          title={tie.sideB.nome}
+        >
+          {tie.sideB.nome}
+        </span>
+
+        {inputGols("ida", tie.ida.mandante, 3)}
+        {inputGols("ida", tie.ida.visitante, 3)}
+        {inputGols("volta", tie.volta.mandante, 4)}
+        {inputGols("volta", tie.volta.visitante, 4)}
+
+        {mostrarPen && (
+          <>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              readOnly={bloqueado}
+              className="chave-score chave-score--pen"
+              style={{ gridColumn: 5, gridRow: 1 }}
+              placeholder="–"
+              title={`Pênaltis — ${tie.sideA.nome}`}
+              value={pen.a ?? ""}
+              onChange={(e) =>
+                handleKoChange(penId, "a", e.target.value.replace(/\D/g, ""))
+              }
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              readOnly={bloqueado}
+              className="chave-score chave-score--pen"
+              style={{ gridColumn: 5, gridRow: 2 }}
+              placeholder="–"
+              title={`Pênaltis — ${tie.sideB.nome}`}
+              value={pen.b ?? ""}
+              onChange={(e) =>
+                handleKoChange(penId, "b", e.target.value.replace(/\D/g, ""))
+              }
+            />
+          </>
+        )}
       </article>
     );
   };
@@ -468,13 +534,13 @@ export default function ChampionsLeagueSimulator() {
 
     if (tie?.provisional) {
       const { uns, seed, faces: facesPar } = tie.provisional;
-      const par = (a, b) => (
-        <div className="ko-leg__row ucl-po-provisional">
+      const pote = (a, b) => (
+        <div className="ucl-po-pote">
           <span className="team-line" title={a.nome}>
             <Escudo nome={a.nome} />
             <span className="team-line__name">{a.nome}</span>
           </span>
-          <span className="ucl-po-provisional__sep">/</span>
+          <span className="ucl-po-pote__sep">/</span>
           <span className="team-line" title={b.nome}>
             <Escudo nome={b.nome} />
             <span className="team-line__name">{b.nome}</span>
@@ -482,26 +548,29 @@ export default function ChampionsLeagueSimulator() {
         </div>
       );
       return (
-        <div key={tie.id} className="ko-tie ko-tie--disabled">
-          <p className="ucl-po-pair-label">2 confrontos após o sorteio</p>
-          <div className="ko-leg">{par(uns[0], uns[1])}</div>
-          <div className="ko-leg ucl-po-vs">
-            <span className="ucl-po-vs__x">×</span>
-            {par(seed[0], seed[1])}
+        <div key={tie.id} className="ko-tie ko-tie--disabled ucl-po-card">
+          <div className="ucl-po-matchup">
+            {pote(uns[0], uns[1])}
+            <span className="ucl-po-matchup__x" aria-hidden>
+              ×
+            </span>
+            {pote(seed[0], seed[1])}
           </div>
           {facesPar?.[0] && facesPar?.[1] && (
-            <p className="ucl-po-faces">
-              Vencedores enfrentam{" "}
-              <span className="team-line" title={facesPar[0].nome}>
-                <Escudo nome={facesPar[0].nome} />
-                <span className="team-line__name">{facesPar[0].nome}</span>
-              </span>
-              <span className="ucl-po-provisional__sep">/</span>
-              <span className="team-line" title={facesPar[1].nome}>
-                <Escudo nome={facesPar[1].nome} />
-                <span className="team-line__name">{facesPar[1].nome}</span>
-              </span>
-            </p>
+            <div className="ucl-po-faces">
+              <span className="ucl-po-faces__label">Vencedores enfrentam</span>
+              <div className="ucl-po-faces__teams">
+                <span className="team-line" title={facesPar[0].nome}>
+                  <Escudo nome={facesPar[0].nome} />
+                  <span className="team-line__name">{facesPar[0].nome}</span>
+                </span>
+                <span className="ucl-po-faces__dot" aria-hidden />
+                <span className="team-line" title={facesPar[1].nome}>
+                  <Escudo nome={facesPar[1].nome} />
+                  <span className="team-line__name">{facesPar[1].nome}</span>
+                </span>
+              </div>
+            </div>
           )}
         </div>
       );
@@ -839,11 +908,6 @@ export default function ChampionsLeagueSimulator() {
             <button type="button" className="knockout__sortear" onClick={fazerSorteio}>
               {sorteio ? "Resortear play-offs" : "Sortear play-offs"}
             </button>
-            {!sorteio && (
-              <p className="ucl-chave__hint">
-                Cada bloco vira 2 confrontos no sorteio; os 2 vencedores enfrentam o par das oitavas.
-              </p>
-            )}
           </div>
 
           <div className="bracket">
