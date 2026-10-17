@@ -516,40 +516,41 @@
 }
 
 /* Copa do Brasil — #0F7A3D · texto branco · hover #1FA85B · brilho #F2C94C */
+/* Copa do Brasil — Dark Forest & Gold */
 .theme-copa-brasil {
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-  --copa-glow: #f2c94c;
-  --copa-hover: #1fa85b;
-  --bg-deep: #0f7a3d;
-  --bg-card: color-mix(in srgb, #000000 18%, #0f7a3d);
-  --bg-card-hover: color-mix(in srgb, #1fa85b 22%, #0a5c2e);
-  --gold: #f2c94c;
-  --gold-dim: #d4b038;
-  --gold-hover-bright: #f2c94c;
-  --border: color-mix(in srgb, #f2c94c 38%, transparent);
-  --text: #ffffff;
-  --text-muted: rgba(255, 255, 255, 0.78);
-  --accent-green: #0a5c2e;
-  --input-bg: color-mix(in srgb, #000000 22%, #0f7a3d);
-  --sortear-fg: #0f3d24;
-  --bg-glow-a: color-mix(in srgb, #f2c94c 14%, transparent);
-  --bg-glow-b: color-mix(in srgb, #1fa85b 12%, transparent);
-  --gradient-base-start: #0f7a3d;
-  --gradient-base-end: #0a5c2e;
-  --support-donation-end: color-mix(in srgb, #000000 28%, #0f7a3d);
-  --pill-bg: color-mix(in srgb, #1fa85b 28%, transparent);
-  --support-footer-bg: color-mix(in srgb, #000000 22%, #0f7a3d);
-  --support-footer-text: rgba(255, 255, 255, 0.88);
-  --support-footer-btn-text: #ffffff;
-  --support-footer-btn-bg: color-mix(in srgb, #ffffff 10%, transparent);
-  --support-footer-btn-border: color-mix(in srgb, #f2c94c 35%, transparent);
-  --support-block-border: color-mix(in srgb, #f2c94c 22%, transparent);
-  --support-block-feedback-bg: color-mix(in srgb, #000000 15%, transparent);
-  --champion-bg-end: color-mix(in srgb, #1fa85b 18%, #0a5c2e);
-  --support-footer-btn-hover-bg: color-mix(in srgb, #1fa85b 45%, transparent);
-  --support-footer-btn-hover-border: color-mix(in srgb, #f2c94c 55%, transparent);
-  --input-border: color-mix(in srgb, #f2c94c 28%, transparent);
-  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --copa-glow: #d9b84f;
+  --copa-hover: #235b40;
+  --bg-deep: #081b15;
+  --bg-card: #102b22;
+  --bg-card-hover: #173b2e;
+  --gold: #d9b84f;
+  --gold-dim: #a68c38;
+  --gold-hover-bright: #f0cf67;
+  --border: color-mix(in srgb, #28483a 85%, transparent);
+  --text: #f2f5ef;
+  --text-muted: #9aafa5;
+  --accent-green: #235b40;
+  --input-bg: #0c241b;
+  --sortear-fg: #081b15;
+  --bg-glow-a: color-mix(in srgb, #d9b84f 12%, transparent);
+  --bg-glow-b: color-mix(in srgb, #235b40 14%, transparent);
+  --gradient-base-start: #081b15;
+  --gradient-base-end: #04100c;
+  --support-donation-end: color-mix(in srgb, #102b22 70%, #081b15);
+  --pill-bg: color-mix(in srgb, #235b40 28%, transparent);
+  --support-footer-bg: color-mix(in srgb, #102b22 88%, #000000);
+  --support-footer-text: #9aafa5;
+  --support-footer-btn-text: #f2f5ef;
+  --support-footer-btn-bg: color-mix(in srgb, #ffffff 6%, transparent);
+  --support-footer-btn-border: color-mix(in srgb, #28483a 90%, transparent);
+  --support-block-border: color-mix(in srgb, #28483a 80%, transparent);
+  --support-block-feedback-bg: color-mix(in srgb, #102b22 70%, transparent);
+  --champion-bg-end: color-mix(in srgb, #d9b84f 14%, #102b22);
+  --support-footer-btn-hover-bg: color-mix(in srgb, #d9b84f 18%, transparent);
+  --support-footer-btn-hover-border: color-mix(in srgb, #d9b84f 55%, transparent);
+  --input-border: color-mix(in srgb, #28483a 90%, transparent);
+  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
 }
 
 /* Champions League — fundo #050B1A · cards #0A1F44 · borda #1B3C8C · botões #1B3C8C / hover #2F5BFF */
@@ -646,6 +647,50 @@
 .phase-tabs__btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+  pointer-events: none;
+}
+
+.phase-tabs__tip {
+  position: relative;
+  display: inline-flex;
+}
+
+.phase-tabs__tip--locked {
+  cursor: help;
+}
+
+.phase-tabs__tip--locked::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.55rem);
+  transform: translateX(-50%) translateY(-2px);
+  z-index: 40;
+  width: max-content;
+  max-width: 15rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-deep) 88%, #000000);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s ease;
+}
+
+.phase-tabs__tip--locked:hover::after,
+.phase-tabs__tip--locked:focus-within::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .phase-tabs__btn--active {
@@ -1852,53 +1897,53 @@
 }
 
 .theme-copa-brasil .app-title {
-  background: linear-gradient(135deg, #ffffff 0%, #fff9e6 55%, #f2c94c 100%);
+  background: linear-gradient(135deg, #f2f5ef 0%, #f0cf67 55%, #d9b84f 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .theme-copa-brasil .app-back-home:hover {
-  color: #ffffff;
+  color: #f2f5ef;
   border-color: color-mix(in srgb, var(--copa-glow) 70%, transparent);
   background: color-mix(in srgb, var(--copa-hover) 48%, transparent);
   box-shadow: 0 0 22px color-mix(in srgb, var(--copa-glow) 28%, transparent);
 }
 
 .theme-copa-brasil .knockout__resortear:hover {
-  color: #ffffff;
+  color: #f2f5ef;
   border-color: color-mix(in srgb, var(--copa-glow) 55%, transparent);
   background: color-mix(in srgb, var(--copa-hover) 38%, transparent);
 }
 
 .theme-copa-brasil .knockout__sortear {
-  background: linear-gradient(135deg, #f2c94c 0%, #d4b038 100%);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
   color: var(--sortear-fg);
-  border: 1px solid color-mix(in srgb, #f2c94c 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 70%, transparent);
   box-shadow:
-    0 4px 22px color-mix(in srgb, #f2c94c 32%, transparent),
+    0 4px 22px color-mix(in srgb, var(--gold) 32%, transparent),
     0 0 0 1px color-mix(in srgb, #ffffff 12%, transparent);
 }
 
 .theme-copa-brasil .knockout__sortear:hover {
-  background: linear-gradient(135deg, #1fa85b 0%, #0f7a3d 100%);
-  color: #ffffff;
-  border-color: color-mix(in srgb, #f2c94c 55%, transparent);
+  background: linear-gradient(135deg, var(--copa-hover) 0%, var(--bg-deep) 100%);
+  color: #f2f5ef;
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
   box-shadow:
-    0 6px 28px color-mix(in srgb, #1fa85b 45%, transparent),
-    0 0 26px color-mix(in srgb, #f2c94c 22%, transparent);
+    0 6px 28px color-mix(in srgb, var(--copa-hover) 45%, transparent),
+    0 0 26px color-mix(in srgb, var(--gold) 22%, transparent);
 }
 
 .theme-copa-brasil .knockout__sortear:disabled {
   opacity: 0.32;
   color: color-mix(in srgb, var(--sortear-fg) 55%, transparent);
-  background: color-mix(in srgb, #f2c94c 22%, #0f7a3d);
+  background: color-mix(in srgb, var(--gold) 22%, var(--bg-deep));
   border-color: color-mix(in srgb, #ffffff 10%, transparent);
   filter: grayscale(0.55) brightness(0.92);
 }
 
 .theme-copa-brasil .knockout__sortear:disabled:hover {
-  background: color-mix(in srgb, #f2c94c 22%, #0f7a3d);
+  background: color-mix(in srgb, var(--gold) 22%, var(--bg-deep));
   color: color-mix(in srgb, var(--sortear-fg) 55%, transparent);
   border-color: color-mix(in srgb, #ffffff 10%, transparent);
 }

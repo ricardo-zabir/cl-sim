@@ -85,7 +85,7 @@ export const TOTAL_RODADAS_UCL = 8;
 
 /**
  * Confrontos: id estável `ucl-md{rodada}-{i}`.
- * MD1 com placares oficiais; demais rodadas editáveis.
+ * MD1–MD2 com placares oficiais; demais rodadas editáveis.
  */
 export const JOGOS_UCL_LIGA = [
   // ——— Rodada 1 ———
@@ -249,8 +249,9 @@ export const JOGOS_UCL_LIGA = [
   { id: "ucl-md8-17", rodada: 8, casa: "Slovan Bratislava", fora: "Inter" },
 ];
 
-/** Placares oficiais da rodada 1. */
+/** Placares oficiais das rodadas 1–2. */
 export const PLACARES_OFICIAIS_UCL_LIGA = {
+  // Rodada 1
   "ucl-md1-0": { casa: 1, fora: 0 },
   "ucl-md1-1": { casa: 2, fora: 3 },
   "ucl-md1-2": { casa: 3, fora: 2 },
@@ -269,6 +270,26 @@ export const PLACARES_OFICIAIS_UCL_LIGA = {
   "ucl-md1-15": { casa: 5, fora: 0 },
   "ucl-md1-16": { casa: 4, fora: 0 },
   "ucl-md1-17": { casa: 2, fora: 3 },
+
+  // Rodada 2
+  "ucl-md2-0": { casa: 0, fora: 2 },
+  "ucl-md2-1": { casa: 2, fora: 0 },
+  "ucl-md2-2": { casa: 3, fora: 0 },
+  "ucl-md2-3": { casa: 2, fora: 0 },
+  "ucl-md2-4": { casa: 3, fora: 4 },
+  "ucl-md2-5": { casa: 1, fora: 4 },
+  "ucl-md2-6": { casa: 1, fora: 0 },
+  "ucl-md2-7": { casa: 3, fora: 3 },
+  "ucl-md2-8": { casa: 3, fora: 1 },
+  "ucl-md2-9": { casa: 3, fora: 2 },
+  "ucl-md2-10": { casa: 3, fora: 6 },
+  "ucl-md2-11": { casa: 3, fora: 4 },
+  "ucl-md2-12": { casa: 6, fora: 0 },
+  "ucl-md2-13": { casa: 3, fora: 1 },
+  "ucl-md2-14": { casa: 1, fora: 0 },
+  "ucl-md2-15": { casa: 2, fora: 4 },
+  "ucl-md2-16": { casa: 3, fora: 2 },
+  "ucl-md2-17": { casa: 0, fora: 3 },
 };
 
 export function placarUclLigaEhOficial(id) {

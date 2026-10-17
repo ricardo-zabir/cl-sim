@@ -5,7 +5,7 @@ import {
 } from "./knockoutLogic";
 
 /**
- * Placares oficiais oitavas/quartas Libertadores 2026.
+ * Placares oficiais oitavas/quartas/semis (ida) Libertadores 2026.
  * Chaves: `${tieId}-ida` / `-volta` / `-pen` ({ a, b } = sideA / sideB).
  */
 export const PLACARES_OFICIAIS_LIBERTA_KO = {
@@ -40,6 +40,10 @@ export const PLACARES_OFICIAIS_LIBERTA_KO = {
   "qf-2-pen": { a: 4, b: 3 },
   "qf-3-ida": { casa: 2, fora: 0 },
   "qf-3-volta": { casa: 2, fora: 1 },
+
+  // Semis (ida)
+  "sf-0-ida": { casa: 0, fora: 0 }, // Estudiantes 0 x 0 Flamengo
+  "sf-1-ida": { casa: 1, fora: 2 }, // Fluminense 1 x 2 Palmeiras
 };
 
 export function placarLibertaKoEhOficial(id) {

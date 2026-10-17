@@ -104,7 +104,7 @@ export default function ChampionsLeagueSimulator() {
   const [placares, setPlacares] = useState(() => ({
     ...PLACARES_OFICIAIS_UCL_LIGA,
   }));
-  const [rodada, setRodada] = useState(1);
+  const [rodada, setRodada] = useState(3);
   const [koPlacares, setKoPlacares] = useState({});
   const [sorteio, setSorteio] = useState(null);
   const [pixCopiado, setPixCopiado] = useState(false);
@@ -756,28 +756,40 @@ export default function ChampionsLeagueSimulator() {
           >
             Fase de liga
           </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={fase === "playoffs"}
-            className={`phase-tabs__btn ${fase === "playoffs" ? "phase-tabs__btn--active" : ""}`}
-            disabled={!ligaOk}
-            title={!ligaOk ? "Preencha todos os placares da fase de liga" : undefined}
-            onClick={() => ligaOk && setFase("playoffs")}
+          <span
+            className={`phase-tabs__tip${!ligaOk ? " phase-tabs__tip--locked" : ""}`}
+            data-tip={!ligaOk ? "Complete a fase de liga para liberar os play-offs" : undefined}
           >
-            Play-offs
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={fase === "mataMata"}
-            className={`phase-tabs__btn ${fase === "mataMata" ? "phase-tabs__btn--active" : ""}`}
-            disabled={!playoffsOk}
-            title={!playoffsOk ? "Conclua os play-offs para liberar o mata-mata" : undefined}
-            onClick={() => playoffsOk && setFase("mataMata")}
+            <button
+              type="button"
+              role="tab"
+              aria-selected={fase === "playoffs"}
+              className={`phase-tabs__btn ${fase === "playoffs" ? "phase-tabs__btn--active" : ""}`}
+              disabled={!ligaOk}
+              onClick={() => ligaOk && setFase("playoffs")}
+            >
+              Play-offs
+            </button>
+          </span>
+          <span
+            className={`phase-tabs__tip${!playoffsOk ? " phase-tabs__tip--locked" : ""}`}
+            data-tip={
+              !playoffsOk
+                ? "Complete os play-offs para liberar o mata-mata"
+                : undefined
+            }
           >
-            Mata-mata
-          </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={fase === "mataMata"}
+              className={`phase-tabs__btn ${fase === "mataMata" ? "phase-tabs__btn--active" : ""}`}
+              disabled={!playoffsOk}
+              onClick={() => playoffsOk && setFase("mataMata")}
+            >
+              Mata-mata
+            </button>
+          </span>
         </div>
         <h1 className="app-title">Champions League 26/27</h1>
       </header>

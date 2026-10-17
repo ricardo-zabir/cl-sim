@@ -1,5 +1,5 @@
 /**
- * Placares oficiais oitavas/quartas Sul-Americana 2026.
+ * Placares oficiais oitavas/quartas/semis (ida) Sul-Americana 2026.
  * Chaves: `${tieId}-ida` / `-volta` (casa/fora = mandante/visitante) e `-pen` ({ a, b } = sideA/sideB).
  */
 export const PLACARES_OFICIAIS_SULA = {
@@ -32,6 +32,10 @@ export const PLACARES_OFICIAIS_SULA = {
   "sula-qf-2-pen": { a: 1, b: 3 },
   "sula-qf-3-ida": { casa: 2, fora: 0 },
   "sula-qf-3-volta": { casa: 3, fora: 0 },
+
+  // Semis (ida)
+  "sula-sf-0-ida": { casa: 0, fora: 1 }, // Boca Juniors 0 x 1 Vasco
+  "sula-sf-1-ida": { casa: 3, fora: 0 }, // Atlético-MG 3 x 0 Torque
 };
 
 export function placarSulaEhOficial(id) {
