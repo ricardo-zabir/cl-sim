@@ -2820,6 +2820,110 @@
   }
 }
 
+/* Brasileirão Série A — Emerald Night */
+.theme-brasileirao {
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --bg-deep: #091e24;
+  --bg-card: #102d34;
+  --bg-card-hover: #163d43;
+  --gold: #f5d547;
+  --gold-dim: #c6aa35;
+  --gold-hover-bright: #ffe66d;
+  --border: color-mix(in srgb, #24454b 90%, transparent);
+  --text: #f4f8f7;
+  --text-muted: #9bb5b5;
+  --accent-green: #168b78;
+  --input-bg: #0b252b;
+  --sortear-fg: #091e24;
+  --bg-glow-a: color-mix(in srgb, #168b78 14%, transparent);
+  --bg-glow-b: color-mix(in srgb, #f5d547 8%, transparent);
+  --gradient-base-start: #091e24;
+  --gradient-base-end: #061319;
+  --support-donation-end: rgba(9, 30, 36, 0.55);
+  --pill-bg: rgba(0, 0, 0, 0.22);
+  --support-footer-bg: rgba(0, 0, 0, 0.24);
+  --support-footer-text: #b7cfcf;
+  --support-footer-btn-text: #f4f8f7;
+  --support-footer-btn-bg: rgba(255, 255, 255, 0.07);
+  --support-footer-btn-border: rgba(255, 255, 255, 0.12);
+  --support-block-border: rgba(255, 255, 255, 0.06);
+  --support-block-feedback-bg: rgba(255, 255, 255, 0.03);
+  --champion-bg-end: rgba(0, 0, 0, 0.2);
+  --support-footer-btn-hover-bg: rgba(255, 255, 255, 0.14);
+  --support-footer-btn-hover-border: rgba(255, 255, 255, 0.25);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --card-hover-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  --zona-libertadores: #36b6a2;
+  --zona-pre-libertadores: #62a5d9;
+  --zona-sulamericana: #c6aa35;
+  --zona-rebaixamento: #e06060;
+}
+
+.theme-brasileirao .app-title {
+  color: var(--gold);
+}
+
+.theme-brasileirao .app-back-home:hover {
+  color: var(--gold-hover-bright);
+}
+
+.theme-brasileirao .support-footer__btn:hover {
+  background: var(--support-footer-btn-hover-bg);
+  border-color: var(--support-footer-btn-hover-border);
+}
+
+.theme-brasileirao .ucl-liga-table__row--libertadores {
+  background: color-mix(in srgb, var(--zona-libertadores) 22%, transparent) !important;
+  box-shadow: inset 3px 0 0 var(--zona-libertadores);
+}
+
+.theme-brasileirao .ucl-liga-table__row--libertadores .ucl-liga-table__pos {
+  color: color-mix(in srgb, var(--zona-libertadores) 70%, #fff);
+}
+
+.theme-brasileirao .ucl-liga-table__row--preLibertadores {
+  background: color-mix(in srgb, var(--zona-pre-libertadores) 18%, transparent) !important;
+  box-shadow: inset 3px 0 0 var(--zona-pre-libertadores);
+}
+
+.theme-brasileirao .ucl-liga-table__row--preLibertadores .ucl-liga-table__pos {
+  color: color-mix(in srgb, var(--zona-pre-libertadores) 70%, #fff);
+}
+
+.theme-brasileirao .ucl-liga-table__row--sulamericana {
+  background: color-mix(in srgb, var(--zona-sulamericana) 16%, transparent) !important;
+  box-shadow: inset 3px 0 0 var(--zona-sulamericana);
+}
+
+.theme-brasileirao .ucl-liga-table__row--sulamericana .ucl-liga-table__pos {
+  color: color-mix(in srgb, var(--zona-sulamericana) 65%, #fff);
+}
+
+.theme-brasileirao .ucl-liga-table__row--rebaixamento {
+  background: color-mix(in srgb, var(--zona-rebaixamento) 14%, transparent) !important;
+  box-shadow: inset 3px 0 0 var(--zona-rebaixamento);
+}
+
+.theme-brasileirao .ucl-liga-table__row--rebaixamento .ucl-liga-table__pos {
+  color: color-mix(in srgb, var(--zona-rebaixamento) 70%, #fff);
+}
+
+.theme-brasileirao .ucl-liga__legend-item--libertadores::before {
+  background: var(--zona-libertadores);
+}
+
+.theme-brasileirao .ucl-liga__legend-item--preLibertadores::before {
+  background: var(--zona-pre-libertadores);
+}
+
+.theme-brasileirao .ucl-liga__legend-item--sulamericana::before {
+  background: var(--zona-sulamericana);
+}
+
+.theme-brasileirao .ucl-liga__legend-item--rebaixamento::before {
+  background: var(--zona-rebaixamento);
+}
+
 @media (min-width: 768px) {
   .bracket__matches:not(.bracket__matches--ties) {
     display: grid;

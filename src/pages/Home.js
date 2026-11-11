@@ -4,6 +4,7 @@ import logoLibertadores from "../assets/copa-libertadores-logo.png";
 import logoSulAmericana from "../assets/copa-sul-americana-logo.png";
 import logoCopaBrasil from "../assets/CopaDoBrasil.png";
 import logoChampionsLeague from "../assets/Logo_UEFA_Champions_League.png";
+import logoBrasileirao from "../assets/brasileirao-serie-a-2022.png";
 import "../App.css";
 
 const EMAIL_CONTATO = "ricardofonseca.zabir@hotmail.com";
@@ -30,6 +31,13 @@ const COMPETICOES = [
     logo: logoCopaBrasil,
     title: "Copa do Brasil",
     meta: "A Taça do Povo",
+  },
+  {
+    id: "brasileirao",
+    to: "/brasileirao",
+    logo: logoBrasileirao,
+    title: "Brasileirão Série A 2026",
+    meta: "A paixão nacional",
   },
   {
     id: "champions-league",
