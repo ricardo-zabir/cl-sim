@@ -104,7 +104,7 @@ export default function ChampionsLeagueSimulator() {
   const [placares, setPlacares] = useState(() => ({
     ...PLACARES_OFICIAIS_UCL_LIGA,
   }));
-  const [rodada, setRodada] = useState(3);
+  const [rodada, setRodada] = useState(5);
   const [koPlacares, setKoPlacares] = useState({});
   const [sorteio, setSorteio] = useState(null);
   const [pixCopiado, setPixCopiado] = useState(false);

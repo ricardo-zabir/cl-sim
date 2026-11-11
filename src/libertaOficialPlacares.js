@@ -5,8 +5,9 @@ import {
 } from "./knockoutLogic";
 
 /**
- * Placares oficiais oitavas/quartas/semis (ida) Libertadores 2026.
+ * Placares oficiais oitavas/quartas/semis Libertadores 2026.
  * Chaves: `${tieId}-ida` / `-volta` / `-pen` ({ a, b } = sideA / sideB).
+ * Final (28/11, Montevidéu): Estudiantes × Palmeiras — ainda não jogada.
  */
 export const PLACARES_OFICIAIS_LIBERTA_KO = {
   // Oitavas
@@ -30,7 +31,7 @@ export const PLACARES_OFICIAIS_LIBERTA_KO = {
   "r16-7-volta": { casa: 1, fora: 1 },
   "r16-7-pen": { a: 7, b: 6 },
 
-  // Quartas (mando conforme jogos oficiais)
+  // Quartas
   "qf-0-ida": { casa: 1, fora: 1 },
   "qf-0-volta": { casa: 0, fora: 1 },
   "qf-1-ida": { casa: 0, fora: 2 },
@@ -41,9 +42,13 @@ export const PLACARES_OFICIAIS_LIBERTA_KO = {
   "qf-3-ida": { casa: 2, fora: 0 },
   "qf-3-volta": { casa: 2, fora: 1 },
 
-  // Semis (ida)
+  // Semis
   "sf-0-ida": { casa: 0, fora: 0 }, // Estudiantes 0 x 0 Flamengo
+  "sf-0-volta": { casa: 0, fora: 0 }, // Flamengo 0 x 0 Estudiantes
+  "sf-0-pen": { a: 3, b: 2 }, // Estudiantes 3 x 2 Flamengo
   "sf-1-ida": { casa: 1, fora: 2 }, // Fluminense 1 x 2 Palmeiras
+  "sf-1-volta": { casa: 0, fora: 1 }, // Palmeiras 0 x 1 Fluminense
+  "sf-1-pen": { a: 3, b: 5 }, // Fluminense 3 x 5 Palmeiras
 };
 
 export function placarLibertaKoEhOficial(id) {
