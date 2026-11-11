@@ -32,7 +32,7 @@ export function confrontoDuplo({ sideA, sideB, id, idaMandanteEhSideA = true }) 
   };
 }
 
-/** [sideA, sideB, idaMandanteEhSideA] — oitavas 2025. */
+/** [sideA, sideB, idaMandanteEhSideA] — oitavas 2026. */
 export const CONFRONTOS_OITAVAS_COPA = [
   ["Vasco", "Fluminense", true],
   ["Internacional", "Corinthians", true],

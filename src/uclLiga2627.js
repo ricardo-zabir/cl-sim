@@ -85,7 +85,7 @@ export const TOTAL_RODADAS_UCL = 8;
 
 /**
  * Confrontos: id estável `ucl-md{rodada}-{i}`.
- * MD1–MD2 com placares oficiais; demais rodadas editáveis.
+ * MD1–MD4 com placares oficiais; demais rodadas editáveis.
  */
 export const JOGOS_UCL_LIGA = [
   // ——— Rodada 1 ———
@@ -249,7 +249,7 @@ export const JOGOS_UCL_LIGA = [
   { id: "ucl-md8-17", rodada: 8, casa: "Slovan Bratislava", fora: "Inter" },
 ];
 
-/** Placares oficiais das rodadas 1–2. */
+/** Placares oficiais das rodadas 1–4. */
 export const PLACARES_OFICIAIS_UCL_LIGA = {
   // Rodada 1
   "ucl-md1-0": { casa: 1, fora: 0 },
@@ -290,6 +290,46 @@ export const PLACARES_OFICIAIS_UCL_LIGA = {
   "ucl-md2-15": { casa: 2, fora: 4 },
   "ucl-md2-16": { casa: 3, fora: 2 },
   "ucl-md2-17": { casa: 0, fora: 3 },
+
+  // Rodada 3
+  "ucl-md3-0": { casa: 2, fora: 2 },
+  "ucl-md3-1": { casa: 1, fora: 2 },
+  "ucl-md3-2": { casa: 4, fora: 0 },
+  "ucl-md3-3": { casa: 0, fora: 1 },
+  "ucl-md3-4": { casa: 4, fora: 3 },
+  "ucl-md3-5": { casa: 5, fora: 1 },
+  "ucl-md3-6": { casa: 4, fora: 2 },
+  "ucl-md3-7": { casa: 4, fora: 3 },
+  "ucl-md3-8": { casa: 1, fora: 1 },
+  "ucl-md3-9": { casa: 4, fora: 1 },
+  "ucl-md3-10": { casa: 2, fora: 4 },
+  "ucl-md3-11": { casa: 3, fora: 1 },
+  "ucl-md3-12": { casa: 3, fora: 0 },
+  "ucl-md3-13": { casa: 2, fora: 2 },
+  "ucl-md3-14": { casa: 1, fora: 0 },
+  "ucl-md3-15": { casa: 4, fora: 1 },
+  "ucl-md3-16": { casa: 1, fora: 0 },
+  "ucl-md3-17": { casa: 2, fora: 3 },
+
+  // Rodada 4
+  "ucl-md4-0": { casa: 0, fora: 1 }, // Shakhtar 0-1 Sporting
+  "ucl-md4-1": { casa: 2, fora: 0 }, // Galatasaray 2-0 Stuttgart
+  "ucl-md4-2": { casa: 0, fora: 2 }, // Atl. Madrid 0-2 Bayern
+  "ucl-md4-3": { casa: 3, fora: 0 }, // Barcelona 3-0 Aston Villa
+  "ucl-md4-4": { casa: 0, fora: 3 }, // Feyenoord 0-3 Inter
+  "ucl-md4-5": { casa: 0, fora: 0 }, // Bodø/Glimt 0-0 Lille
+  "ucl-md4-6": { casa: 4, fora: 0 }, // LASK 4-0 Slovan Bratislava
+  "ucl-md4-7": { casa: 3, fora: 2 }, // Man United 3-2 Roma
+  "ucl-md4-8": { casa: 0, fora: 6 }, // Villarreal 0-6 PSG
+  "ucl-md4-9": { casa: 2, fora: 3 }, // AEK Athens 2-3 Real Madrid
+  "ucl-md4-10": { casa: 3, fora: 2 }, // Fenerbahçe 3-2 Liverpool
+  "ucl-md4-11": { casa: 2, fora: 1 }, // Dortmund 2-1 Betis
+  "ucl-md4-12": { casa: 4, fora: 1 }, // Porto 4-1 Napoli
+  "ucl-md4-13": { casa: 1, fora: 2 }, // PSV 1-2 Club Brugge
+  "ucl-md4-14": { casa: 2, fora: 3 }, // RB Leipzig 2-3 Man City
+  "ucl-md4-15": { casa: 1, fora: 9 }, // Lens 1-9 Como
+  "ucl-md4-16": { casa: 1, fora: 2 }, // Slavia Praha 1-2 Arsenal
+  "ucl-md4-17": { casa: 4, fora: 1 }, // Viking 4-1 Sabah
 };
 
 export function placarUclLigaEhOficial(id) {

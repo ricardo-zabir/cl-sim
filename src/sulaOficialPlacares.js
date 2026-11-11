@@ -1,6 +1,7 @@
 /**
- * Placares oficiais oitavas/quartas/semis (ida) Sul-Americana 2026.
+ * Placares oficiais oitavas/quartas/semis Sul-Americana 2026.
  * Chaves: `${tieId}-ida` / `-volta` (casa/fora = mandante/visitante) e `-pen` ({ a, b } = sideA/sideB).
+ * Final (21/11, Barranquilla): Atlético-MG × Boca Juniors — ainda não jogada.
  */
 export const PLACARES_OFICIAIS_SULA = {
   // Oitavas
@@ -33,9 +34,11 @@ export const PLACARES_OFICIAIS_SULA = {
   "sula-qf-3-ida": { casa: 2, fora: 0 },
   "sula-qf-3-volta": { casa: 3, fora: 0 },
 
-  // Semis (ida)
+  // Semis
   "sula-sf-0-ida": { casa: 0, fora: 1 }, // Boca Juniors 0 x 1 Vasco
+  "sula-sf-0-volta": { casa: 1, fora: 3 }, // Vasco 1 x 3 Boca Juniors
   "sula-sf-1-ida": { casa: 3, fora: 0 }, // Atlético-MG 3 x 0 Torque
+  "sula-sf-1-volta": { casa: 2, fora: 0 }, // Torque 2 x 0 Atlético-MG
 };
 
 export function placarSulaEhOficial(id) {
